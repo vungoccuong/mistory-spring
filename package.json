@@ -1,0 +1,48 @@
+{
+	"name": "btl-ltm",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"start": "NODE_ENV=production node index.js",
+		"dev-nodemon": "nodemon index.js",
+		"dev": "OS=true node index.js",
+		"tsc": "tsc",
+		"dev-ts": "ts-node-dev --respawn --transpileOnly ./app/app.ts"
+	},
+	"dependencies": {
+		"@zeit/next-sass": "^1.0.1",
+		"babel-plugin-module-resolver": "^3.2.0",
+		"babel-plugin-wrap-in-js": "^1.1.1",
+		"cookie-parser": "~1.4.4",
+		"debug": "~2.6.9",
+		"express": "~4.16.1",
+		"lodash": "^4.17.15",
+		"moment": "^2.24.0",
+		"mongoose": "^5.6.9",
+		"mongoose-seed": "^0.6.0",
+		"morgan": "~1.9.1",
+		"next": "^9.0.3",
+		"node-sass": "^4.12.0",
+		"react": "^16.9.0",
+		"react-dom": "^16.9.0",
+		"styled-components": "^4.3.2",
+		"ts-node-dev": "^1.0.0-pre.41",
+		"typescript": "^3.5.3",
+		"uniqid": "^5.0.3",
+		"websocket": "^1.0.29",
+		"ws": "^7.1.2"
+	},
+	"devDependencies": {
+		"@types/express": "^4.17.0",
+		"@types/lodash": "^4.14.136",
+		"@types/mongoose": "^5.5.12",
+		"@types/ws": "^6.0.2",
+		"eslint": "^6.1.0",
+		"nodemon": "^1.19.1",
+		"prettier": "^1.18.2"
+	},
+	"optionalDependencies": {
+		"bufferutil": "^4.0.1",
+		"utf-8-validate": "^5.0.2"
+	}
+}
