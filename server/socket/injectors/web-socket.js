@@ -22,4 +22,12 @@ WebSocket.prototype.setIsAlive = function() {
 WebSocket.prototype.setNotAlive = function() {
 	this.isAlive = false;
 };
+WebSocket.prototype.sendMessage = function(event, payload) {
+	this.send(
+		JSON.stringify({
+			event,
+			payload,
+		}),
+	);
+};
 module.exports = console.log('injected extension to WebSocket');

@@ -14,6 +14,10 @@ class ChatSocketServer extends WebSocketServer {
 			ws.initExtension();
 			ws.on('pong', ws.setIsAlive);
 			ws.on('message', rawData => {
+				console.log(rawData)
+				const buffer = new ArrayBuffer(32);
+				const array = new Float32Array(buffer);
+				ws.send(array);
 				const data = utils.getJsonData(rawData);
 				if (!data) return;
 				const { event, payload } = data;
@@ -46,6 +50,9 @@ class ChatSocketServer extends WebSocketServer {
 				ws.send(data);
 			}
 		});
+	}
+	listenMessage(event, cb = _.noop) {
+		this.eventer.on(event, cb);
 	}
 }
 module.exports = ChatSocketServer;
