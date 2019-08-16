@@ -16,7 +16,7 @@ async function start() {
 	}
 	const expressServer = _initExpress();
 	const httpServer = http.createServer(expressServer);
-	require('./server/socket')(httpServer);
+	const wss = require('./server/socket').init(httpServer);
 	httpServer.listen(port, () => {
 		console.log(`server ready on : ${port}`);
 	});
