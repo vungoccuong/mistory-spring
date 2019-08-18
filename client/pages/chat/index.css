@@ -1,0 +1,11 @@
+.chat {
+  height: calc(100vh - 65px);
+}
+.chat .ant-row {
+  height: 100%;
+}
+.chat .ant-row .ant-col {
+  height: 100%;
+}
+
+/*# sourceMappingURL=index.css.map */

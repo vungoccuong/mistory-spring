@@ -1,0 +1,32 @@
+.gin-message-group {
+  display: flex;
+  margin-left: 21px;
+}
+.gin-message-group:first-child {
+  padding-top: 10px;
+}
+.gin-message-group .gin-msg-gr-container {
+  max-width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+.gin-message-group.right {
+  justify-content: flex-end;
+  margin-right: 21px;
+}
+.gin-message-group.right .gin-msg-gravt-container {
+  display: flex;
+  justify-content: flex-end;
+}
+.gin-message-group.right .gin-message {
+  margin-left: 0;
+  margin-right: 20px;
+}
+.gin-message-group.right .gin-msg-gr-container {
+  align-items: flex-end;
+}
+.gin-message-group .gin-message {
+  margin-left: 20px;
+}
+
+/*# sourceMappingURL=index.css.map */

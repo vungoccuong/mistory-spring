@@ -1,0 +1,30 @@
+.gin-message-group {
+	&:first-child {
+		padding-top: 10px;
+	}
+	display: flex;
+	margin-left: 21px;
+	.gin-msg-gr-container {
+		max-width: 50%;
+		display: flex;
+		flex-direction: column;
+	}
+	&.right {
+		justify-content: flex-end;
+		margin-right: 21px;
+      	.gin-msg-gravt-container {
+			display: flex;
+			justify-content: flex-end;
+		}
+		.gin-message {
+			margin-left: 0;
+			margin-right: 20px;
+		}
+		.gin-msg-gr-container {
+			align-items: flex-end;
+		}
+	}
+	.gin-message {
+		margin-left: 20px;
+	}
+}

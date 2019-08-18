@@ -1,25 +1,63 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MainLayout from '../../layouts/MainLayout';
-import Link from 'next/link';
+import './index.scss';
+import { Col, Row } from 'antd';
+import ChatList from '../../components/ChatList';
+import ChatBox from '../../components/ChatBox';
+import ChatTool from '../../components/ChatTool';
+import { initChannel, updateLastMessage } from '../../redux/actions/channel';
+import { connect } from 'react-redux';
+import { loginSuccess } from '../../redux/actions/user';
+import { connection } from '../../utils/websocket';
+import { MESSAGE } from '../../utils/evenTypes';
+import { useRouter } from 'next/router';
+import { pushMessage } from '../../redux/actions/message';
+function Chat({ initChannel, currentUser, loginSuccess, pushMessage, updateLastMessage }) {
+	const router = useRouter();
+	const queryRoomId = router.query.roomId;
+	useEffect(() => {
+		initChannel();
+		loginSuccess(currentUser);
+	}, []);
 
-function Chat() {
+	useEffect(() => {
+		const sub = connection.onEvent(MESSAGE, data => {
+			const { room } = data;
+			if (room === queryRoomId) {
+				//
+				pushMessage(data);
+			}
+			updateLastMessage(data);
+		});
+		return () => sub.unsubscribe();
+	}, []);
+
 	return (
 		<MainLayout>
-			<div className="container">
-				<div className="jumbotron">
-					<h1>Next.js + Express</h1>
-					<p>A simple app using Spotify API</p>
-					<p>
-						<Link href="/search">
-							<a className="btn btn-primary btn-lg" role="button">
-								Use it !
-							</a>
-						</Link>
-					</p>
-				</div>
+			<div className="chat">
+				<Row>
+					<Col md={5}>
+						<ChatList />
+					</Col>
+					<Col md={14}>
+						<ChatBox />
+					</Col>
+					<Col md={5}>
+						<ChatTool />
+					</Col>
+				</Row>
 			</div>
 		</MainLayout>
 	);
 }
 
-export default Chat;
+Chat.getInitialProps = async ({ req }) => {
+	const { fullName, username, avatar } = (req && req.user) || {};
+	return { currentUser: { fullName, username, avatar } };
+};
+export default connect(
+	state => ({
+		rooms: state.channel.rooms,
+	}),
+	{ initChannel, loginSuccess, pushMessage, updateLastMessage },
+)(Chat);

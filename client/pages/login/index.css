@@ -1,0 +1,11 @@
+.gin-login-page {
+  height: calc(100vh - 65px);
+}
+.gin-login-page > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/*# sourceMappingURL=index.css.map */

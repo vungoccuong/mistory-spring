@@ -1,9 +1,6 @@
 {
-  "verbose": true,
-  "ignore": ["node_modules", ".next", "client"],
-  "watch": [
-    "server/routes/apiRoutes.js",
-    "server.js"
-  ],
-  "ext": "js json"
+	"verbose": true,
+	"ignore": ["node_modules", ".next", "client"],
+	"watch": ["server/**/*", "index.js"],
+	"ext": "js json"
 }

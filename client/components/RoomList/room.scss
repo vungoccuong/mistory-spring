@@ -1,0 +1,35 @@
+.gin-room {
+	padding: 15px 0 15px 0;
+	background-color: #6c757d;
+	display: flex;
+	align-items: center;
+	&.active {
+		background-color: #9ea9b1;
+	}
+	.gin-left {
+		.ant-avatar {
+			margin-left: 10px;
+		}
+		flex-grow: 1;
+	}
+	.gin-center {
+		padding-left: 10px;
+		flex-grow: 20;
+		color: #f8f9fa;
+		.gin-room-info {
+			.gin-room-name {
+				font-weight: 600;
+			}
+			.gin-room-message {
+				display: flex;
+				justify-content: space-between;
+				.gin-date {
+					font-size: 12px;
+				}
+			}
+		}
+	}
+	.gin-right {
+		flex-grow: 4;
+	}
+}

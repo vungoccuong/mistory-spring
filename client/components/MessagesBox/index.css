@@ -1,0 +1,19 @@
+.gin-messages-box {
+  height: calc(100% - 80px - 18px);
+  overflow: auto;
+  overflow-x: hidden;
+}
+.gin-messages-box::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+  border-radius: 10px;
+}
+.gin-messages-box::-webkit-scrollbar {
+  width: 6px;
+  background-color: #f5f5f5;
+}
+.gin-messages-box::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 10px;
+}
+
+/*# sourceMappingURL=index.css.map */

@@ -1,0 +1,9 @@
+.gin-login-page {
+	height: calc(100vh - 65px);
+	> div {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+	}
+}

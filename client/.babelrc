@@ -1,19 +1,10 @@
 {
 	"plugins": [
 		[
-			"module-resolver",
+			"import",
 			{
-				"root": ["."],
-				"alias": {
-					"styles": "./styles"
-				},
-				"cwd": "babelrc"
-			}
-		],
-		[
-			"wrap-in-js",
-			{
-				"extensions": ["css$", "scss$"]
+				"libraryName": "antd",
+				"style": true
 			}
 		]
 	],

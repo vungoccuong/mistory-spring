@@ -1,0 +1,9 @@
+.chat {
+  height: calc(100vh - 65px);
+  .ant-row {
+      height: 100%;
+      .ant-col {
+        height: 100%;
+      }
+  }
+}

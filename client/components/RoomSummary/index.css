@@ -1,0 +1,16 @@
+.gin-room-summary {
+  height: 200px;
+  border: 1px solid #CBCBCB;
+  border-left: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.gin-room-summary > div .gin-room-name {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+/*# sourceMappingURL=index.css.map */
