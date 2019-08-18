@@ -8,8 +8,9 @@ function MessagesBox({ messages }) {
 	useEffect(() => {
 		if (ref.current) {
 			const chat = ref.current;
-			const timeScroll = process.env.NODE_ENV === 'production' ? 100 : 1000;
+			const timeScroll = process.env.NODE_ENV === 'production' ? 1000 : 1000;
 			setTimeout(() => {
+				console.log('scroll bottom');
 				scrollBottom(chat);
 			}, timeScroll);
 		}
