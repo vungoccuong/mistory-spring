@@ -12,7 +12,7 @@ function ChatBox({ rooms, messageLoading }) {
 	if (queryRoomId) {
 	} else if (rooms.length) {
 		const first = rooms[0];
-		router.push(`/chat/${first._id}`);
+		router.replace(`/chat/${first._id}`);
 	}
 	useEffect(() => {
 		if(queryRoomId) {

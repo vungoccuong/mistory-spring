@@ -2,9 +2,12 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import './index.scss';
 import MessageGroup from '../MessageGroup';
 import { connect } from 'react-redux';
+import { useRouter } from 'next/router';
 
 function MessagesBox({ messages }) {
 	const ref = useRef(null);
+	const router = useRouter();
+	const roomId = router.query.roomId;
 	useEffect(() => {
 		if (ref.current) {
 			const chat = ref.current;
@@ -14,7 +17,7 @@ function MessagesBox({ messages }) {
 				scrollBottom(chat);
 			}, timeScroll);
 		}
-	}, []);
+	}, [roomId]);
 	useEffect(() => {
 		if (ref.current) {
 			const chat = ref.current;
