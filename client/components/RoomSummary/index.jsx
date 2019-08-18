@@ -13,7 +13,7 @@ function RoomSummary({ rooms }) {
 		if (!roomId) {
 			setLoading(true);
 		}
-	}, []);
+	}, [roomId]);
 	let roomCompute = useCallback(() => rooms.find(room => room._id === roomId) || {}, [
 		rooms,
 		roomId,

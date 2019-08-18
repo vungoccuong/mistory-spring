@@ -30,7 +30,7 @@ function Chat({ initChannel, currentUser, loginSuccess, pushMessage, updateLastM
 			updateLastMessage(data);
 		});
 		return () => sub.unsubscribe();
-	}, []);
+	}, [queryRoomId]);
 
 	return (
 		<MainLayout>
