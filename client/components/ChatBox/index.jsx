@@ -15,7 +15,9 @@ function ChatBox({ rooms, messageLoading }) {
 		router.push(`/chat/${first._id}`);
 	}
 	useEffect(() => {
-		messageLoading(queryRoomId);
+		if(queryRoomId) {
+			messageLoading(queryRoomId);
+		}
 	}, [queryRoomId]);
 	return (
 		<div className="gin-chat-box">

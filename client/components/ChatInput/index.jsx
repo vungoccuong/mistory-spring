@@ -1,11 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import './index.scss';
 import { Icon, Input } from 'antd';
-import { connection } from '../../utils/websocket';
+import { getConnection } from '../../utils/websocket';
 import { useRouter } from 'next/router';
 import { MESSAGE } from '../../utils/evenTypes';
 import 'emoji-mart/css/emoji-mart.css';
-import { Picker } from 'emoji-mart';
 import Emoji from '../Emoji';
 function ChatInput(props) {
 	const [value, setValue] = useState('');
@@ -31,7 +30,7 @@ function ChatInput(props) {
 		}
 	};
 	const send = () => {
-		connection.emitEvent(MESSAGE, {
+		getConnection().emitEvent(MESSAGE, {
 			content: value,
 			roomId,
 		});

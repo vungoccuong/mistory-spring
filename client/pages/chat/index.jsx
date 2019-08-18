@@ -8,7 +8,7 @@ import ChatTool from '../../components/ChatTool';
 import { initChannel, updateLastMessage } from '../../redux/actions/channel';
 import { connect } from 'react-redux';
 import { loginSuccess } from '../../redux/actions/user';
-import { connection } from '../../utils/websocket';
+import { getConnection } from '../../utils/websocket';
 import { MESSAGE } from '../../utils/evenTypes';
 import { useRouter } from 'next/router';
 import { pushMessage } from '../../redux/actions/message';
@@ -21,7 +21,7 @@ function Chat({ initChannel, currentUser, loginSuccess, pushMessage, updateLastM
 	}, []);
 
 	useEffect(() => {
-		const sub = connection.onEvent(MESSAGE, data => {
+		const sub = getConnection().onEvent(MESSAGE, data => {
 			const { room } = data;
 			if (room === queryRoomId) {
 				//

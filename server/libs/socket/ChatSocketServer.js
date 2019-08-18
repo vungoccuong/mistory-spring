@@ -94,7 +94,6 @@ class ChatSocketServer extends WebSocketServer {
 	}
 	emitToRoom(room, event, payload) {
 		this.clients.forEach(ws => {
-			console.log(ws.rooms)
 			if (ws.isOpen() && ws.rooms.has(room)) {
 				ws.emitEvent(event, payload);
 			}
