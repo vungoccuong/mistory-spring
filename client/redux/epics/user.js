@@ -17,7 +17,11 @@ export const login = ($action, $state) =>
 					return userActions.loginSuccess(response.response);
 				}),
 				catchError(error =>
-					of(userActions.loginFailure(error.xhr.response || error.xhr.statusText)),
+					of(
+						userActions.loginFailure(
+							error.xhr.response.message || error.xhr.statusText,
+						),
+					),
 				),
 			),
 		),

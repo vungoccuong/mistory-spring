@@ -1,17 +1,17 @@
-require('dotenv').config();
+const dev = process.env.NODE_ENV !== 'production';
+require('dotenv').config({ path: dev ? '.dev.env' : '.env' });
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const http = require('http');
 const passport = require('passport');
-const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 3000;
 const onlyServer = process.env.OS === 'true';
 const next = require('next');
 const app = next({ dev, dir: './client' });
 const handle = app.getRequestHandler();
-require('./server/models');
+require('./server/models')();
 require('./server/passport/localStrategy')();
 const sessionParser = require('./server/shareds/sessionParser');
 if (onlyServer) {
