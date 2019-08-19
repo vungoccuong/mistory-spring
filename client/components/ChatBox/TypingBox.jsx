@@ -12,6 +12,7 @@ const AbsoluteBox = styled.div`
 `;
 const TextBox = styled.p`
 	font-weight: 600;
+	font-size: 12px;
 `;
 export default connect(state => ({ isTypings: state.room.isTypings }))(function({ isTypings }) {
 	const text = useMemo(() => {
