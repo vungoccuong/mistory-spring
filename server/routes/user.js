@@ -43,5 +43,8 @@ router.post(
 		return res.send({ message: 'Đăng kí thành công ' });
 	},
 );
-
+router.get('/logout', function(req, res) {
+	req.logout();
+	res.redirect('/login');
+});
 module.exports = router;

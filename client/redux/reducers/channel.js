@@ -31,6 +31,7 @@ export default function(state = INIT_STATE, { type, payload }) {
 					if (room._id === payload.room) {
 						room.lastMessage = payload;
 					}
+					room.updatedAt = payload.date;
 					return room;
 				}),
 			};

@@ -119,7 +119,10 @@ const _Form = ({ form }) => {
 					<Button type="default" htmlType="submit" className="login-form-button">
 						Đăng kí
 					</Button>
-					hoặc <Link href="/login">Đăng nhập ngay</Link>
+					hoặc{' '}
+					<Link href="/login">
+						<a>Đăng nhập ngay</a>
+					</Link>
 				</Form.Item>
 			</Form>
 		</div>

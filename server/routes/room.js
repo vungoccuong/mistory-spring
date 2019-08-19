@@ -22,9 +22,7 @@ function getRoomAliasAndAvt(room, userName) {
 	}
 }
 function _getInboxRoomAliasAndAvt(members, userName) {
-	let friend = {
-		fullName: '',
-	};
+	let friend = members[0];
 	for (let member of members) {
 		if (member.username !== userName) {
 			friend = member;

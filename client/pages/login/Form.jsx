@@ -82,7 +82,10 @@ const _Form = ({ error, login, form: { getFieldDecorator, validateFields }, user
 					<Button type="default" htmlType="submit" className="login-form-button">
 						Đăng nhập
 					</Button>
-					hoặc <Link href={'/logon'}>Đăng kí ngay</Link>
+					hoặc{' '}
+					<Link href={'/logon'}>
+						<a>Đăng kí ngay</a>
+					</Link>
 				</Form.Item>
 			</Form>
 		</div>
