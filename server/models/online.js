@@ -24,13 +24,16 @@ schema.statics.recordOnlineTime = async function(userId) {
 	if (currentOnlineRecord) {
 		return false;
 	} else {
-		currentOnlineRecord.closed = true;
-		await currentOnlineRecord.save();
 		await this.create({
 			user,
 		});
-		await this.models['user'].findByIdAndUpdate(userId, { lastOnline: new Date() });
+		await mongoose.model('user').findByIdAndUpdate(user, { lastOnline: new Date() });
 		return true;
 	}
 };
+schema.statics.recordOfflineTime = function(userId) {
+	const user = mongoose.Types.ObjectId(userId);
+	return this.findOneAndUpdate({ user, closed: false }, { $set: { closed: true } }).exec();
+};
+
 module.exports = mongoose.model('online', schema);

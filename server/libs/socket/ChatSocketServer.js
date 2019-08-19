@@ -8,19 +8,30 @@ class ChatSocketServer extends WebSocketServer {
 		super({ noServer: true });
 		this.server = server;
 		this.eventer = new EventEmitter();
-		this.middlewares = [];
+		//http level middlewares is middlewares
+		// which is called when http switch to websocket
+		this.hlmMiddlewares = [];
+		//websocket level middlewares is middlewares
+		// whitch is called when websocket's socket connected
+		this.wlmMiddlewares = [];
 		this._init();
 	}
 	_init() {
 		this._polling();
 		this._event();
-		this._middleware();
+		this._hlmMiddleware();
 	}
 	_event() {
 		this.on('connection', ws => {
 			ws.initExtension();
-			this.eventer.emit('connection', ws);
-			this._initSocketEvent(ws);
+			this._runWlm(ws, err => {
+				if (err) return ws.close();
+				this.eventer.emit('connection', ws);
+				this._initSocketEvent(ws);
+			});
+			ws.on('close', () => {
+				ws.eventer.emit('disconnect');
+			});
 		});
 		this.on('error', e => {
 			// throw e;
@@ -29,34 +40,33 @@ class ChatSocketServer extends WebSocketServer {
 	_polling() {
 		this.interval = setInterval(() => {
 			this.clients.forEach(ws => {
-				if (!ws.isAlive) return ws.terminate();
+				if (!ws.isAlive) {
+					ws.eventer.emit('disconnect');
+					return ws.terminate();
+				}
 				ws.setNotAlive();
 				ws.ping(_.noop);
 			});
-		}, 30000);
+		}, 5000);
 	}
-	_middleware() {
-		process.nextTick(() => {
-			this.server.on('upgrade', (req, socket, head) => {
-				console.log('upgrading.............');
-				const mapping = {};
-				this._run(req, socket, mapping, err => {
-					if (err) {
-						return socket.destroy();
+	_hlmMiddleware() {
+		this.server.on('upgrade', (req, socket, head) => {
+			const mapping = {};
+			this._runHlm(req, socket, mapping, err => {
+				if (err) {
+					return socket.destroy();
+				}
+				this.handleUpgrade(req, socket, head, ws => {
+					for (let key of Object.keys(mapping)) {
+						ws[key] = mapping[key];
 					}
-					console.log('middlewares  is all passed');
-					this.handleUpgrade(req, socket, head, ws => {
-						for (let key of Object.keys(mapping)) {
-							ws[key] = mapping[key];
-						}
-						this.emit('connection', ws, req);
-					});
+					this.emit('connection', ws, req);
 				});
 			});
 		});
 	}
-	_run(req, socket, mapping, fn) {
-		const fns = this.middlewares;
+	_runHlm(req, socket, mapping, fn) {
+		const fns = this.hlmMiddlewares;
 		if (!fns.length) return fn(null);
 		function run(i) {
 			fns[i](req, socket, mapping, function(err) {
@@ -70,7 +80,18 @@ class ChatSocketServer extends WebSocketServer {
 
 		run(0);
 	}
-
+	_runWlm(ws, fn) {
+		const fns = this.wlmMiddlewares;
+		if (!fns.length) return fn();
+		function run(i) {
+			fns[i](ws, function(err) {
+				if (err) return fn(err);
+				if (!fns[i + 1]) return fn();
+				run(i + 1);
+			});
+		}
+		run(0);
+	}
 	_initSocketEvent(ws) {
 		ws.on('pong', ws.setIsAlive);
 		ws.on('message', this._onMessage(ws));
@@ -102,8 +123,11 @@ class ChatSocketServer extends WebSocketServer {
 	onEvent(event, cb = _.noop) {
 		this.eventer.on(event, cb);
 	}
-	use(fn) {
-		this.middlewares.push(fn);
+	useHLM(fn) {
+		this.hlmMiddlewares.push(fn);
+	}
+	useWLM(fn) {
+		this.wlmMiddlewares.push(fn);
 	}
 }
 module.exports = ChatSocketServer;

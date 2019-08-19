@@ -4,8 +4,10 @@ const messageModel = require('../models/message');
 const _ = require('lodash');
 const socketUtil = require('./utils/socket');
 const authMiddleware = require('./middlewares/auth');
+const onlineRecordMiddleware = require('./middlewares/online');
 module.exports = wss => {
-	wss.use(authMiddleware);
+	wss.useWLM(onlineRecordMiddleware);
+	wss.useHLM(authMiddleware);
 	wss.onEvent('connection', async ws => {
 		await socketUtil.joinAllRoom(ws);
 		ws.onEvent(EventType.MESSAGE, async data => {
@@ -38,6 +40,15 @@ module.exports = wss => {
 				isTyping,
 				username: user.username,
 			});
+		});
+		ws.onEvent('disconnect', async () => {
+			console.log(ws.user.username, 'disconnected');
+			ws.socketManager.remove(ws.user._id.toString(), ws.id);
+			setTimeout(() => {
+				if (!ws.socketManager.isOnline(ws.user._id.toString())) {
+					onlineRecordMiddleware.recordOffline(ws.user._id);
+				}
+			}, 2000);
 		});
 	});
 };

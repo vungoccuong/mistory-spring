@@ -7,11 +7,11 @@ class SocketManager {
 		this.store.get(key).add(value);
 	}
 	remove(key, value) {
-		this._checkAndInit();
+		this._checkAndInit(key);
 		this.store.get(key).delete(value);
 	}
 	isOnline(key) {
-		this._checkAndInit();
+		this._checkAndInit(key);
 		return this.store.get(key).size > 0;
 	}
 	_checkAndInit(key) {
