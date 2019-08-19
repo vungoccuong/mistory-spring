@@ -9,10 +9,18 @@ import { initChannel, updateLastMessage } from '../../redux/actions/channel';
 import { connect } from 'react-redux';
 import { loginSuccess } from '../../redux/actions/user';
 import { getConnection } from '../../utils/websocket';
-import { MESSAGE } from '../../utils/evenTypes';
+import { MESSAGE, TYPING } from '../../utils/evenTypes';
 import { useRouter } from 'next/router';
 import { pushMessage } from '../../redux/actions/message';
-function Chat({ initChannel, currentUser, loginSuccess, pushMessage, updateLastMessage }) {
+import { pushTyping } from '../../redux/actions/room';
+function Chat({
+	initChannel,
+	currentUser,
+	loginSuccess,
+	pushMessage,
+	updateLastMessage,
+	pushTyping,
+}) {
 	const router = useRouter();
 	const queryRoomId = router.query.roomId;
 	useEffect(() => {
@@ -21,15 +29,21 @@ function Chat({ initChannel, currentUser, loginSuccess, pushMessage, updateLastM
 	}, []);
 
 	useEffect(() => {
-		const sub = getConnection().onEvent(MESSAGE, data => {
-			const { room } = data;
-			if (room === queryRoomId) {
-				//
-				pushMessage(data);
-			}
-			updateLastMessage(data);
-		});
-		return () => sub.unsubscribe();
+		const connection = getConnection()
+			.onEvent(MESSAGE, data => {
+				const { room } = data;
+				if (room === queryRoomId) {
+					//
+					pushMessage(data);
+				}
+				updateLastMessage(data);
+			})
+			.onEvent(TYPING, data => {
+				const { room } = data;
+				if (room === queryRoomId) {
+					pushTyping(data);
+				}
+			});
 	}, [queryRoomId]);
 
 	return (
@@ -59,5 +73,5 @@ export default connect(
 	state => ({
 		rooms: state.channel.rooms,
 	}),
-	{ initChannel, loginSuccess, pushMessage, updateLastMessage },
+	{ initChannel, loginSuccess, pushMessage, updateLastMessage, pushTyping },
 )(Chat);

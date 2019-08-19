@@ -6,19 +6,19 @@ import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import Loading from '../Loading';
 import { messageLoading } from '../../redux/actions/message';
+import Router from 'next/router';
 function ChatBox({ rooms, messageLoading }) {
 	const router = useRouter();
 	const queryRoomId = router.query.roomId;
-	if (queryRoomId) {
-	} else if (rooms.length) {
-		const first = rooms[0];
-		router.replace(`/chat/${first._id}`);
-	}
+
 	useEffect(() => {
-		if(queryRoomId) {
+		if (queryRoomId) {
 			messageLoading(queryRoomId);
+		} else if (rooms.length) {
+			const first = rooms[0];
+			Router.push(`/chat/${first._id}`);
 		}
-	}, [queryRoomId]);
+	}, [queryRoomId, rooms]);
 	return (
 		<div className="gin-chat-box">
 			{queryRoomId ? <MessagesBox /> : <Loading />}

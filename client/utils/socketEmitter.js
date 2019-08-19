@@ -19,11 +19,11 @@ Emitter.prototype.listen = function(name, handler) {
 Emitter.prototype.off = function(name) {
 	const fnName = createName(name);
 	if (this.subjects.has(fnName)) {
-		this.subjects.get(fnName).dispose();
+		this.subjects.get(fnName).unsubscribe();
 	}
 };
 Emitter.prototype.dispose = function() {
 	const subjects = this.subjects;
-	subjects.values().forEach(subject => subject.dispose());
+	Array.from(subjects.values()).forEach(subject => subject.unsubscribe());
 };
 export default Emitter;

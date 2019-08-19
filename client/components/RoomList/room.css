@@ -14,9 +14,13 @@
   margin-left: 10px;
 }
 .gin-room .gin-center {
+  width: 100%;
   padding-left: 10px;
   flex-grow: 20;
   color: #f8f9fa;
+}
+.gin-room .gin-center .gin-room-info {
+  width: 100%;
 }
 .gin-room .gin-center .gin-room-info .gin-room-name {
   font-weight: 600;
@@ -24,9 +28,16 @@
 .gin-room .gin-center .gin-room-info .gin-room-message {
   display: flex;
   justify-content: space-between;
+  width: 100%;
+}
+.gin-room .gin-center .gin-room-info .gin-room-message .gin-content {
+  width: 65%;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .gin-room .gin-center .gin-room-info .gin-room-message .gin-date {
   font-size: 12px;
+  width: 35%;
 }
 .gin-room .gin-right {
   flex-grow: 4;

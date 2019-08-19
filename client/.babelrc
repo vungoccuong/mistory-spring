@@ -7,6 +7,13 @@
 				"style": true,
 				"libraryDirectory": "lib"
 			}
+		],
+		[
+			"babel-plugin-styled-components",
+			{
+				"ssr": false,
+				"preprocess": false
+			}
 		]
 	],
 	"presets": ["next/babel"],

@@ -24,8 +24,11 @@ export function getConnection() {
 		this.send(data);
 	};
 	connection.onEvent = function(event, cb = _.noop) {
-		return emitter.listen(event, cb);
+		emitter.listen(event, cb);
+		return this;
 	};
+	connection.dispose = () => emitter.dispose();
+	connection.off = event => emitter.off(event);
 	connection.onopen = () => {
 		console.log('connection is opened');
 		if (process.browser) {

@@ -13,18 +13,27 @@
 		flex-grow: 1;
 	}
 	.gin-center {
+		width: 100%;
 		padding-left: 10px;
 		flex-grow: 20;
 		color: #f8f9fa;
 		.gin-room-info {
+			width: 100%;
 			.gin-room-name {
 				font-weight: 600;
 			}
 			.gin-room-message {
 				display: flex;
 				justify-content: space-between;
+				width: 100%;
+				.gin-content {
+					width: 65%;
+					white-space: nowrap;
+					overflow: hidden;
+				}
 				.gin-date {
 					font-size: 12px;
+					width: 35%;
 				}
 			}
 		}

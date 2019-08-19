@@ -23,14 +23,16 @@ function Room({ name, lastMessage, updatedAt, avatar, _id }) {
 					<div className="gin-room-info">
 						<div className="gin-room-name">{name}</div>
 						<div className="gin-room-message">
-							<div className="gin-content">{lastMessage && lastMessage.content}</div>
+							<div className="gin-content">
+								{lastMessage && lastMessage.content.substring(0, 20)}
+							</div>
 							<div className="gin-date">
 								{new Date(updatedAt).toLocaleTimeString()}
 							</div>
 						</div>
 					</div>
 				</div>
-				<div className="gin-right"/>
+				<div className="gin-right" />
 			</div>
 		</Link>
 	);

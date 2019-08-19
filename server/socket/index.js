@@ -1,35 +1,18 @@
 const EventType = require('./eventTypes');
-const sessionParser = require('../shareds/sessionParser');
-const userModel = require('../models/user');
 const roomModel = require('../models/room');
 const messageModel = require('../models/message');
-const status = require('http-status');
 const _ = require('lodash');
+const socketUtil = require('./utils/socket');
+const authMiddleware = require('./middlewares/auth');
 module.exports = wss => {
-	wss.use(function(req, socket, mapping, done) {
-		sessionParser(req, {}, async () => {
-			const passport = req.session.passport || {};
-			if (passport.user) {
-				const id = passport.user;
-				const user = await userModel.findById(id).lean();
-				if (user) {
-					mapping.user = user;
-					done();
-				} else {
-					done('not found');
-				}
-			} else {
-				done('not auth');
-			}
-		});
-	});
-	wss.onEvent('connection', ws => {
-		joinAllRoom(ws);
+	wss.use(authMiddleware);
+	wss.onEvent('connection', async ws => {
+		await socketUtil.joinAllRoom(ws);
 		ws.onEvent(EventType.MESSAGE, async data => {
 			const { roomId, content } = data;
 			const user = ws.user;
 			const room = await roomModel.findByIdAndUserId(roomId, user._id);
-			if (!room) ws.close(status.NOT_FOUND);
+			if (!room) return ws.close();
 			const message = await messageModel.createMessage(
 				user.username,
 				user._id,
@@ -44,10 +27,17 @@ module.exports = wss => {
 				_.pick(message, ['sender', 'date', 'content', '_id', 'room']),
 			);
 		});
+		ws.onEvent(EventType.TYPING, async data => {
+			const user = ws.user;
+			const { isTyping } = data;
+			const roomId = data.room;
+			const room = await roomModel.findByIdAndUserId(roomId, user._id).lean();
+			if (!room) return ws.close();
+			wss.emitToRoom(room._id.toString(), EventType.TYPING, {
+				room: roomId,
+				isTyping,
+				username: user.username,
+			});
+		});
 	});
-	async function joinAllRoom(ws) {
-		const userId = ws.user._id;
-		const records = await roomModel.find({ members: userId }, '_id');
-		ws.join(records.map(record => record._id.toString()));
-	}
 };
