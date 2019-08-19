@@ -17,6 +17,10 @@ const schema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		lastOnline: {
+			type: Date,
+			default: () => new Date(),
+		},
 	},
 	{
 		timestamps: true,
