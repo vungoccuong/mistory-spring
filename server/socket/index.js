@@ -5,6 +5,8 @@ const _ = require('lodash');
 const socketUtil = require('./utils/socket');
 const authMiddleware = require('./middlewares/auth');
 const onlineRecordMiddleware = require('./middlewares/online');
+const onlineModel = require('../models/online');
+const userModel = require('../models/user');
 module.exports = wss => {
 	wss.useWLM(onlineRecordMiddleware);
 	wss.useHLM(authMiddleware);
@@ -41,6 +43,13 @@ module.exports = wss => {
 				username: user.username,
 			});
 		});
+		ws.onEvent(EventType.ONLINE, async data => {
+			if (!data) return;
+			const record = await userModel.findByUsername(data, '_id').lean();
+			if (!record) return ws.emitEvent(EventType.ONLINE, false);
+			const online = await getOnlineState(record._id.toString(), ws.socketManager);
+			ws.emitEvent(EventType.ONLINE, online);
+		});
 		ws.onEvent('disconnect', async () => {
 			console.log(ws.user.username, 'disconnected');
 			ws.socketManager.remove(ws.user._id.toString(), ws.id);
@@ -52,3 +61,11 @@ module.exports = wss => {
 		});
 	});
 };
+
+async function getOnlineState(userId, socketManager) {
+	if (socketManager.isOnline(userId)) {
+		return true;
+	}
+	const record = await onlineModel.getLastOnlineRecord(userId);
+	return record && record.createdAt;
+}

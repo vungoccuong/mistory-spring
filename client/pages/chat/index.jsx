@@ -9,7 +9,7 @@ import { initChannel, updateLastMessage } from '../../redux/actions/channel';
 import { connect } from 'react-redux';
 import { loginSuccess } from '../../redux/actions/user';
 import { getConnection } from '../../utils/websocket';
-import { MESSAGE, TYPING } from '../../utils/evenTypes';
+import { MESSAGE, ONLINE, TYPING } from '../../utils/evenTypes';
 import { useRouter } from 'next/router';
 import { pushMessage } from '../../redux/actions/message';
 import { pushTyping, updateOnlineState } from '../../redux/actions/room';
@@ -46,13 +46,13 @@ function Chat({
 					if (room === queryRoomId) {
 						pushTyping(data);
 					}
+				})
+				.onEvent(ONLINE, data => {
+					updateOnlineState(data);
 				});
 		}
 	}, [queryRoomId]);
 
-	useEffect(() => {
-		updateOnlineState(online);
-	}, [queryRoomId, online]);
 	return (
 		<MainLayout>
 			<div className="chat">
@@ -72,10 +72,9 @@ function Chat({
 	);
 }
 
-Chat.getInitialProps = async ({ req, query }) => {
+Chat.getInitialProps = async ({ req }) => {
 	const { fullName, username, avatar } = (req && req.user) || {};
-	const { online } = query;
-	return { currentUser: { fullName, username, avatar }, online };
+	return { currentUser: { fullName, username, avatar } };
 };
 export default connect(
 	state => ({

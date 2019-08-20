@@ -17,7 +17,13 @@ export default function(state = INIT_STATE, { type, payload }) {
 			return { ...state, isFetchingMessages: true, isTypings: new Set() };
 		}
 		case types.FETCH_ROOM_INFO_SUCCESS:
-			return { ...state, isFetchingInfo: false, info: payload, isTypings: new Set() };
+			return {
+				...state,
+				isFetchingInfo: false,
+				info: payload,
+				isTypings: new Set(),
+				online: null,
+			};
 		case types.FETCH_ROOM_INFO_FAILURE:
 			return { ...state, isFetchingInfo: false, error: payload };
 		case types.FETCH_ROOM_MESSAGES_SUCCESS:

@@ -16,10 +16,15 @@ function url(s) {
 
 export let connection;
 export function getConnection() {
+	let queue = [];
 	if (connection) return connection;
 	connection = new W3CWebSocket(url(''));
 	const emitter = new Emitter();
 	connection.emitEvent = function(event, payload) {
+		if (this.readyState !== 1) {
+			queue.push(encode({ event, payload }));
+			return;
+		}
 		const data = encode({ event, payload });
 		this.send(data);
 	};
@@ -29,8 +34,12 @@ export function getConnection() {
 	};
 	connection.dispose = () => emitter.dispose();
 	connection.off = event => emitter.off(event);
-	connection.onopen = () => {
-		console.log('connection is opened');
+	connection.onopen = function() {
+		if (queue.length) {
+			const temp = queue;
+			queue = [];
+			temp.forEach(e => this.send(e));
+		}
 		if (process.browser) {
 			message.success('Kết nối thành công');
 		}

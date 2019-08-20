@@ -39,7 +39,12 @@ schema.statics.findByIdAndUserId = function(id, userId) {
 	});
 };
 schema.statics.isMember = async function(roomId, userId) {
-	return !(await this.findByIdAndUserId(roomId, userId));
+	return !(await this.findByIdAndUserId(roomId, userId).lean());
 };
-
+schema.statics.findByAMemberId = function(userId) {
+	return this.findOne({
+		members: mongoose.Types.ObjectId(userId),
+	});
+};
+// schema.statics.findByMember
 module.exports = mongoose.model('room', schema);

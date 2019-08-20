@@ -3,6 +3,8 @@ const mustAuth = require('../middlewares/must-auth');
 const roomModel = require('../models/room');
 const userModel = require('../models/user');
 const status = require('http-status');
+const { query } = require('express-validator');
+const reqValidate = require('../middlewares/validate-req');
 router.get('/', mustAuth, async (req, res) => {
 	const user = req.user;
 	const records = await roomModel
@@ -93,4 +95,32 @@ function _getFriendId(members, userId) {
 function _getInfo(id) {
 	return userModel.findById(id, 'username fullName avatar').lean();
 }
+router.get(
+	'/search',
+	mustAuth,
+	[
+		query('text')
+			.isString()
+			.isLength({ max: 100 }),
+	],
+	reqValidate,
+	async (req, res) => {
+		const user = req.user;
+		const userId = user._id;
+		const { text } = req.query;
+		if (!text) return res.send([]);
+		const reg = new RegExp(text);
+		const userRecords = await userModel
+			.find({ $or: [{ username: reg }, { fullName: reg }] }, '_id fullName username')
+			.limit(5)
+			.lean();
+		const populatedRoomRecords = await Promise.all(
+			userRecords.map(async user => {
+				user.room = await roomModel.findByAMemberId(user._id);
+				return user;
+			}),
+		);
+		return res.send([]);
+	},
+);
 module.exports = router;
