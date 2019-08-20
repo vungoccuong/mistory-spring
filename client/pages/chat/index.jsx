@@ -12,7 +12,7 @@ import { getConnection } from '../../utils/websocket';
 import { MESSAGE, TYPING } from '../../utils/evenTypes';
 import { useRouter } from 'next/router';
 import { pushMessage } from '../../redux/actions/message';
-import { pushTyping } from '../../redux/actions/room';
+import { pushTyping, updateOnlineState } from '../../redux/actions/room';
 function Chat({
 	initChannel,
 	currentUser,
@@ -20,6 +20,8 @@ function Chat({
 	pushMessage,
 	updateLastMessage,
 	pushTyping,
+	updateOnlineState,
+	online,
 }) {
 	const router = useRouter();
 	const queryRoomId = router.query.roomId;
@@ -29,23 +31,28 @@ function Chat({
 	}, []);
 
 	useEffect(() => {
-		const connection = getConnection()
-			.onEvent(MESSAGE, data => {
-				const { room } = data;
-				if (room === queryRoomId) {
-					//
-					pushMessage(data);
-				}
-				updateLastMessage(data);
-			})
-			.onEvent(TYPING, data => {
-				const { room } = data;
-				if (room === queryRoomId) {
-					pushTyping(data);
-				}
-			});
+		if (queryRoomId) {
+			getConnection()
+				.onEvent(MESSAGE, data => {
+					const { room } = data;
+					if (room === queryRoomId) {
+						//
+						pushMessage(data);
+					}
+					updateLastMessage(data);
+				})
+				.onEvent(TYPING, data => {
+					const { room } = data;
+					if (room === queryRoomId) {
+						pushTyping(data);
+					}
+				});
+		}
 	}, [queryRoomId]);
 
+	useEffect(() => {
+		updateOnlineState(online);
+	}, [queryRoomId, online]);
 	return (
 		<MainLayout>
 			<div className="chat">
@@ -65,13 +72,14 @@ function Chat({
 	);
 }
 
-Chat.getInitialProps = async ({ req }) => {
+Chat.getInitialProps = async ({ req, query }) => {
 	const { fullName, username, avatar } = (req && req.user) || {};
-	return { currentUser: { fullName, username, avatar } };
+	const { online } = query;
+	return { currentUser: { fullName, username, avatar }, online };
 };
 export default connect(
 	state => ({
 		rooms: state.channel.rooms,
 	}),
-	{ initChannel, loginSuccess, pushMessage, updateLastMessage, pushTyping },
+	{ initChannel, loginSuccess, pushMessage, updateLastMessage, pushTyping, updateOnlineState },
 )(Chat);

@@ -4,7 +4,7 @@ import './index.scss';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import Loading from '../Loading';
-function RoomSummary({ rooms }) {
+function RoomSummary({ rooms, online }) {
 	const [loading, setLoading] = useState(false);
 	const [room, setRoom] = useState({});
 	const router = useRouter();
@@ -27,15 +27,24 @@ function RoomSummary({ rooms }) {
 			{loading ? (
 				<Loading />
 			) : (
-				<div>
+				<div className="gin-room-summary-container">
 					<Avatar style={{ color: '#444446', backgroundColor: '#ffffff' }} size={76}>
 						{room.avatar}
 					</Avatar>
 					<p className="gin-room-name">{room.name}</p>
+					<p>
+						{online === true
+							? 'Đang hoạt động'
+							: !online
+							? 'Không xác định'
+							: new Date(online).toLocaleString()}
+					</p>
 				</div>
 			)}
 		</div>
 	);
 }
 
-export default connect(state => ({ rooms: state.channel.rooms }))(RoomSummary);
+export default connect(state => ({ rooms: state.channel.rooms, online: state.room.online }))(
+	RoomSummary,
+);

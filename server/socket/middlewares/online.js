@@ -16,3 +16,5 @@ module.exports = async function(ws, fn) {
 module.exports.recordOffline = function(userId) {
 	return onlineModel.recordOfflineTime(userId);
 };
+
+module.exports.socketManager = socketManager;

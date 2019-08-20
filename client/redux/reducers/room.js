@@ -6,6 +6,7 @@ const INIT_STATE = {
 	isFetchingMessages: false,
 	error: null,
 	isTypings: new Set(),
+	online: null,
 };
 export default function(state = INIT_STATE, { type, payload }) {
 	switch (type) {
@@ -34,6 +35,12 @@ export default function(state = INIT_STATE, { type, payload }) {
 				isTypings.delete(username);
 			}
 			return { ...state, isTypings: new Set(isTypings) };
+		}
+		case types.UPDATE_ONLINE_STATE: {
+			return {
+				...state,
+				online: payload,
+			};
 		}
 		default: {
 			return state;

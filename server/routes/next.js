@@ -2,6 +2,8 @@ const isObjectId = require('mongoose').Types.ObjectId.isValid;
 const toObjectId = require('mongoose').Types.ObjectId;
 const userModel = require('../models/user');
 const roomModel = require('../models/room');
+const onlineModel = require('../models/online');
+const onlineSocketMiddleware = require('../socket/middlewares/online');
 module.exports = function(server, app) {
 	function checkLogin(unAuthPath) {
 		return (req, res) => {
@@ -22,7 +24,11 @@ module.exports = function(server, app) {
 			const room = await findOrCreateRoom(roomId, req.user._id);
 			if (room) return app.render(req, res, `/chat/${room._id}`);
 		}
-		return app.render(req, res, req.path);
+		const lastOnline = await getOnlineState(
+			req.user._id.toString(),
+			onlineSocketMiddleware.socketManager,
+		);
+		return app.render(req, res, req.path, { online: lastOnline });
 	});
 	server.get('/login', checkLogin());
 	server.get('/logon', checkLogin('/logon'));
@@ -54,4 +60,12 @@ async function findOrCreateRoom(userName, myUserId) {
 		type: 'inbox',
 		creator: toObjectId(myUserId),
 	});
+}
+
+async function getOnlineState(userId, socketManager) {
+	if (socketManager.isOnline(userId)) {
+		return true;
+	}
+	const record = await onlineModel.getLastOnlineRecord(userId);
+	return record && record.createdAt;
 }
