@@ -8,10 +8,10 @@ function MessagesBox({ messages }) {
 	const ref = useRef(null);
 	const router = useRouter();
 	const roomId = router.query.roomId;
+	const timeScroll = process.env.NODE_ENV === 'production' ? 300 : 1000;
 	useEffect(() => {
 		if (ref.current) {
 			const chat = ref.current;
-			const timeScroll = process.env.NODE_ENV === 'production' ? 1000 : 1000;
 			setTimeout(() => {
 				console.log('scroll bottom');
 				scrollBottom(chat);
@@ -22,7 +22,9 @@ function MessagesBox({ messages }) {
 		if (ref.current) {
 			const chat = ref.current;
 			if (chat.scrollHeight - chat.scrollTop - 300 < chat.clientHeight) {
-				scrollBottom(chat);
+				setTimeout(() => {
+					scrollBottom(chat);
+				}, 80);
 			}
 		}
 	}, [messages]);

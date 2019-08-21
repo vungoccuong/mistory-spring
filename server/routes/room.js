@@ -5,6 +5,7 @@ const userModel = require('../models/user');
 const status = require('http-status');
 const { query } = require('express-validator');
 const reqValidate = require('../middlewares/validate-req');
+const roomHelper = require('../utils/room');
 router.get('/', mustAuth, async (req, res) => {
 	const user = req.user;
 	const records = await roomModel
@@ -13,39 +14,11 @@ router.get('/', mustAuth, async (req, res) => {
 		.populate('lastMessage')
 		.populate('members', '-hashPassword -_id -updatedAt -createdAt')
 		.lean();
-	return res.send(records.map(r => ({ ...r, ...getRoomAliasAndAvt(r, user.username) })));
+	return res.send(
+		records.map(r => ({ ...r, ...roomHelper.getRoomAliasAndAvt(r, user.username) })),
+	);
 });
-function getRoomAliasAndAvt(room, userName) {
-	const members = room.members;
-	if (room.type === 'inbox') {
-		return _getInboxRoomAliasAndAvt(members, userName);
-	} else {
-		return _getGroupRoomAliasAndAvt(members, userName);
-	}
-}
-function _getInboxRoomAliasAndAvt(members, userName) {
-	let friend = members[0];
-	for (let member of members) {
-		if (member.username !== userName) {
-			friend = member;
-			break;
-		}
-	}
-	return {
-		name: friend.fullName,
-		avatar: friend.fullName.substring(0, 2).toUpperCase(),
-	};
-}
-function _getGroupRoomAliasAndAvt(members, userName) {
-	const fullNames = members.filter(m => m.username !== userName).map(m => m.fullName);
-	let name = fullNames.reduce((acc, fullName) => {
-		const a = ' ' + fullName.toUpperCase().charAt(0);
-		return acc + a;
-	}, '');
-	return {
-		avatar: name,
-	};
-}
+
 router.get('/info/:id', mustAuth, async (req, res) => {
 	const { id } = req.params;
 	const user = req.user;
@@ -109,18 +82,9 @@ router.get(
 		const userId = user._id;
 		const { text } = req.query;
 		if (!text) return res.send([]);
-		const reg = new RegExp(text);
-		const userRecords = await userModel
-			.find({ $or: [{ username: reg }, { fullName: reg }] }, '_id fullName username')
-			.limit(5)
-			.lean();
-		const populatedRoomRecords = await Promise.all(
-			userRecords.map(async user => {
-				user.room = await roomModel.findByAMemberId(user._id);
-				return user;
-			}),
-		);
-		return res.send([]);
+		const records = await roomHelper.searchRoom(text, userId, user.username);
+		return res.send(records);
 	},
 );
+
 module.exports = router;

@@ -8,4 +8,5 @@ router.get('/', function(req, res, next) {
 router.use('/user', require('./user'));
 router.use('/room', require('./room'));
 router.use('/message', require('./message'));
+router.use('/file', require('./file'));
 module.exports = router;

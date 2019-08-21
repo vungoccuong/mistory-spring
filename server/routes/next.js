@@ -35,19 +35,7 @@ async function findOrCreateRoom(userName, myUserId) {
 	if (!user) {
 		return false;
 	}
-	const room = await roomModel.findOne({
-		$and: [
-			{ members: { $eq: [toObjectId(user._id), toObjectId(myUserId)] } },
-			{
-				members: {
-					$size: 2,
-				},
-			},
-			{
-				type: 'inbox',
-			},
-		],
-	});
+	const room = await roomModel.findByMembers([user._id, myUserId]);
 	if (room) return room;
 	return roomModel.create({
 		members: [toObjectId(user._id), toObjectId(myUserId)],
@@ -55,5 +43,3 @@ async function findOrCreateRoom(userName, myUserId) {
 		creator: toObjectId(myUserId),
 	});
 }
-
-

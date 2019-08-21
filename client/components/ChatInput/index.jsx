@@ -9,6 +9,7 @@ import Emoji from '../Emoji';
 import { Subject } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
 import TypingBox from '../ChatBox/TypingBox';
+import FileUploader from './FileUploader';
 function ChatInput() {
 	const [value, setValue] = useState('');
 	const router = useRouter();
@@ -85,7 +86,7 @@ function ChatInput() {
 					/>
 				</div>
 				<div className="gin-file-send">
-					<Icon type="paper-clip" style={{ fontSize: 30, color: '#fff' }} />
+					<FileUploader />
 					<Icon
 						type="export"
 						style={{ fontSize: 30, color: '#fff' }}

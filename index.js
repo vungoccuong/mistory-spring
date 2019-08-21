@@ -39,6 +39,7 @@ function _initExpress() {
 }
 function _initBaseMiddleware(server) {
 	server.use(express.static(path.join(__dirname, 'public')));
+	server.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 	server.use(logger('dev'));
 	server.use(express.json());
 	server.use(express.urlencoded({ extended: false }));

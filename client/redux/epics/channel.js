@@ -16,4 +16,16 @@ export const initChannel = (action$, state$) =>
 			),
 		),
 	);
-export const channelEpic = combineEpics(initChannel);
+export const searchRoom = (action$, state$) =>
+	action$.pipe(
+		ofType(types.ROOM_SEARCHING),
+		concatMap(action =>
+			request({
+				url: '/v1/room/search?text=' + action.payload,
+			}).pipe(
+				map(res => actionsChannel.loadChannelSuccess(res.response)),
+				catchError(e => of(actionsChannel.loadChannelFailure(e.xhr.response.message))),
+			),
+		),
+	);
+export const channelEpic = combineEpics(initChannel, searchRoom);

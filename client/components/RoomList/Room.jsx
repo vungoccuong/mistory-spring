@@ -1,10 +1,23 @@
 import React from 'react';
 import './room.scss';
-import { Avatar } from 'antd';
+import { Avatar, Icon } from 'antd';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import Link from 'next/link';
+function Summary({ content }) {
+	if (!content) return <></>;
+	if (typeof content === 'string') {
+		return <>{content.substring(0, 20)}</>;
+	} else {
+		return (
+			<div>
+				<Icon type="paper-clip" />
+				Tệp đính kèm
+			</div>
+		);
+	}
+}
 function Room({ name, lastMessage, updatedAt, avatar, _id }) {
 	const router = useRouter();
 	const roomId = router.query.roomId;
@@ -24,7 +37,7 @@ function Room({ name, lastMessage, updatedAt, avatar, _id }) {
 						<div className="gin-room-name">{name}</div>
 						<div className="gin-room-message">
 							<div className="gin-content">
-								{lastMessage && lastMessage.content.substring(0, 20)}
+								<Summary content={lastMessage && lastMessage.content} />
 							</div>
 							<div className="gin-date">
 								{new Date(updatedAt).toLocaleTimeString()}

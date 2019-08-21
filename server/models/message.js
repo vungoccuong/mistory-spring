@@ -20,18 +20,24 @@ const schema = new mongoose.Schema(
 			type: Date,
 			default: () => new Date(),
 		},
+		type: {
+			type: String,
+			default: 'text',
+			enum: ['text', 'file', 'image'],
+		},
 	},
 	{},
 );
 schema.statics.findInRoom = function(roomId) {
 	return this.find({ room: mongoose.Types.ObjectId(roomId) }, '-senderId -room').lean();
 };
-schema.statics.createMessage = function(sender, senderId, content, roomId) {
+schema.statics.createMessage = function(sender, senderId, content, roomId, type = 'text') {
 	return this.create({
 		sender,
 		senderId: mongoose.Types.ObjectId(senderId),
 		content,
 		room: mongoose.Types.ObjectId(roomId),
+		type,
 	});
 };
 module.exports = mongoose.model('message', schema);

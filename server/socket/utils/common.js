@@ -7,3 +7,7 @@ module.exports.getUrlMetaData = function(url) {
 		return {};
 	}
 };
+
+module.exports.isImage = function(mimetype) {
+	return mimetype.match('image.*');
+};

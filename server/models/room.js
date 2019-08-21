@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const toObjectId = mongoose.Types.ObjectId;
 const schema = new mongoose.Schema(
 	{
 		name: {
@@ -46,5 +47,22 @@ schema.statics.findByAMemberId = function(userId) {
 		members: mongoose.Types.ObjectId(userId),
 	});
 };
-// schema.statics.findByMember
+schema.statics.findByMembers = async function(memberIds, projector = '', type = 'inbox') {
+	return this.findOne(
+		{
+			$and: [
+				{ members: { $all: memberIds.map(toObjectId) } },
+				{
+					members: {
+						$size: 2,
+					},
+				},
+				{
+					type,
+				},
+			],
+		},
+		projector,
+	);
+};
 module.exports = mongoose.model('room', schema);

@@ -1,9 +1,15 @@
 import React from 'react';
 import { Input } from 'antd';
 import './index.scss';
-function RoomSearcher() {
+import { connect } from 'react-redux';
+import { initChannel, searchRoom } from '../../redux/actions/channel';
+function RoomSearcher({ searchRoom, initChannel }) {
 	const onSearch = value => {
-		console.log(value);
+		if (value) {
+			searchRoom(value);
+		} else {
+			initChannel();
+		}
 	};
 	return (
 		<div className="gin-room-searcher">
@@ -11,4 +17,7 @@ function RoomSearcher() {
 		</div>
 	);
 }
-export default RoomSearcher;
+export default connect(
+	null,
+	{ searchRoom, initChannel },
+)(RoomSearcher);
