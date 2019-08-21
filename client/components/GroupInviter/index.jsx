@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './index.scss';
 import { List, Avatar, Select, Spin } from 'antd';
 
@@ -8,10 +8,14 @@ import { request } from 'universal-rxjs-ajax';
 import { map } from 'rxjs/operators';
 import { useRouter } from 'next/router';
 
-function GroupInviter({ room: { type, members, _id } }) {
+function GroupInviter({ room: { type, _id, ...st } }) {
+	const [members, setMember] = useState(st.members);
 	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(false);
-	const router = useRouter();
+	useEffect(() => {
+		setMember(st.members);
+	}, [st.members]);
+	// const router = useRouter();
 	const onSearch = value => {
 		if (!value) return;
 		setLoading(true);
@@ -19,11 +23,15 @@ function GroupInviter({ room: { type, members, _id } }) {
 			url: '/v1/user/search?text=' + value,
 		})
 			.pipe(map(res => res.response))
-			.subscribe(
-				data =>
-					setData(data.map(m => ({ key: m._id, fullName: m.fullName }))) &&
-					setLoading(false),
-			);
+			.subscribe(data => {
+				const memberIds = members.map(m => m._id);
+				setData(
+					data
+						.filter(i => !~memberIds.indexOf(i._id))
+						.map(m => ({ key: m._id, fullName: m.fullName })),
+				);
+				setLoading(false);
+			});
 	};
 	const onChange = ({ key }) => {
 		request({
@@ -35,7 +43,25 @@ function GroupInviter({ room: { type, members, _id } }) {
 			},
 		})
 			.pipe(map(res => res.response))
-			.subscribe(() => router.reload());
+			.subscribe(({ status, data }) => status === 'success' && addMember(data));
+	};
+	const addMember = data => {
+		setMember([data, ...members]);
+	};
+	const onRemoveUser = userId => () =>
+		request({
+			url: '/v1/group/remove',
+			method: 'PUT',
+			body: {
+				userId: userId,
+				roomId: _id,
+			},
+		})
+			.pipe(map(res => res.response))
+			.subscribe(({ status, _id }) => status === 'success' && removeMember(_id));
+	const removeMember = userId => {
+		const r = members.filter(m => m._id !== userId);
+		setMember(r);
 	};
 	if (type !== 'group') return <></>;
 	return (
@@ -62,7 +88,13 @@ function GroupInviter({ room: { type, members, _id } }) {
 					itemLayout="horizontal"
 					dataSource={members}
 					renderItem={({ username, fullName, _id }) => (
-						<List.Item>
+						<List.Item
+							actions={[
+								<a key="list-loadmore-edit" onClick={onRemoveUser(_id)}>
+									Xoá
+								</a>,
+							]}
+						>
 							<List.Item.Meta
 								avatar={<Avatar>{fullName.substring(0, 2).toUpperCase()}</Avatar>}
 								title={
