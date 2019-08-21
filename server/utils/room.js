@@ -35,7 +35,7 @@ function _findRoomWithMember(members) {
 			],
 		})
 		.populate('lastMessage')
-		.populate('members', '-hashPassword -_id -updatedAt -createdAt')
+		.populate('members', '-hashPassword -updatedAt -createdAt')
 		.lean();
 }
 module.exports.searchRoom = _searchRoom;
@@ -62,7 +62,10 @@ function _getInboxRoomAliasAndAvt(members, userName) {
 	};
 }
 function _getGroupRoomAliasAndAvt(members, userName) {
-	const fullNames = members.filter(m => m.username !== userName).map(m => m.fullName);
+	const fullNames = (members.length !== 1
+		? members.filter(m => m.username !== userName)
+		: members
+	).map(m => m.fullName);
 	let name = fullNames.reduce((acc, fullName) => {
 		const a = ' ' + fullName.toUpperCase().charAt(0);
 		return acc + a;

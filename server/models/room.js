@@ -65,4 +65,19 @@ schema.statics.findByMembers = async function(memberIds, projector = '', type = 
 		projector,
 	);
 };
+schema.statics.findExistGroup = async function(userId) {
+	return this.findOne({
+		$and: [
+			{ members: { $all: [toObjectId(userId)] } },
+			{
+				members: {
+					$size: 1,
+				},
+			},
+			{
+				type: 'group',
+			},
+		],
+	});
+};
 module.exports = mongoose.model('room', schema);

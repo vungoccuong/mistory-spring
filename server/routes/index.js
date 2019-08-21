@@ -9,4 +9,5 @@ router.use('/user', require('./user'));
 router.use('/room', require('./room'));
 router.use('/message', require('./message'));
 router.use('/file', require('./file'));
+router.use('/group', require('./group'));
 module.exports = router;

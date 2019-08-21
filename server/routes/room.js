@@ -12,7 +12,7 @@ router.get('/', mustAuth, async (req, res) => {
 		.find({ members: user.id }, '-creator')
 		.sort({ updatedAt: -1 })
 		.populate('lastMessage')
-		.populate('members', '-hashPassword -_id -updatedAt -createdAt')
+		.populate('members', '-hashPassword -updatedAt -createdAt')
 		.lean();
 	return res.send(
 		records.map(r => ({ ...r, ...roomHelper.getRoomAliasAndAvt(r, user.username) })),

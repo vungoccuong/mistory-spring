@@ -7,14 +7,17 @@ import { useRouter } from 'next/router';
 import Loading from '../Loading';
 import { messageLoading } from '../../redux/actions/message';
 import Router from 'next/router';
-function ChatBox({ rooms, messageLoading }) {
+function ChatBox({ rooms, messageLoading, isRoomLoading }) {
 	const router = useRouter();
 	const queryRoomId = router.query.roomId;
 
 	useEffect(() => {
 		if (queryRoomId) {
 			messageLoading(queryRoomId);
-		} else if (rooms.length) {
+		}
+	}, [queryRoomId]);
+	useEffect(() => {
+		if (rooms.length && !queryRoomId) {
 			const first = rooms[0];
 			Router.push(`/chat/${first._id}`);
 		}
@@ -28,6 +31,6 @@ function ChatBox({ rooms, messageLoading }) {
 }
 
 export default connect(
-	state => ({ rooms: state.channel.rooms }),
+	state => ({ rooms: state.channel.rooms, isRoomLoading: state.channel.isFetching }),
 	{ messageLoading },
 )(ChatBox);
