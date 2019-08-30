@@ -1,6 +1,5 @@
 package com.example.websocketdemo.controller;
 
-import com.example.websocketdemo.dao.MessageDao;
 import com.example.websocketdemo.dao.RoomDao;
 import com.example.websocketdemo.dao.UserDao;
 import com.example.websocketdemo.exceptions.RoomNotFoundException;
@@ -24,14 +23,12 @@ import java.util.List;
 @Controller
 public class ChatController {
     private SimpMessagingTemplate template;
-    private final UserDao userDao;
     private final RoomDao roomDao;
     private final IUserManager userManager;
     private final ChatUtil chatUtil;
 
-    public ChatController(SimpMessagingTemplate template, UserDao userDao, RoomDao roomDao, IUserManager userManager, ChatUtil chatUtil) {
+    public ChatController(SimpMessagingTemplate template, RoomDao roomDao, IUserManager userManager, ChatUtil chatUtil) {
         this.template = template;
-        this.userDao = userDao;
         this.roomDao = roomDao;
         this.userManager = userManager;
         this.chatUtil = chatUtil;

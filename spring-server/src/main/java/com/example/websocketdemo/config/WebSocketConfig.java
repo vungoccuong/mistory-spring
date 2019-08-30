@@ -2,8 +2,7 @@ package com.example.websocketdemo.config;
 
 import com.example.websocketdemo.dao.UserDao;
 import com.example.websocketdemo.model.UserModel;
-import com.example.websocketdemo.utils.Auth;
-import io.jsonwebtoken.Claims;
+import com.example.websocketdemo.utils.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
@@ -38,7 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS().setInterceptors(httpSessionHandshakeInterceptor());
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000").withSockJS().setInterceptors(httpSessionHandshakeInterceptor());
     }
 
     @Override
@@ -95,8 +94,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
                     String token = (String) sessionAttributes.get("token");
                     try {
-                        Claims claims = Auth.decodeJWT(token);
-                        UserModel userModel = userDao.getByUserName(claims.getId());
+                        String username = AuthService.getUsernameFromJwt(token);
+                        UserModel userModel = userDao.getByUserName(username);
                         accessor.setUser(userModel);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();

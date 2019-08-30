@@ -29,6 +29,7 @@ public class RoomDao implements IDao<RoomModel> {
 
     @Override
     public void update(RoomModel record) {
+        record.setUpdateAtNow();
         roomRepository.save(record);
     }
 
@@ -39,5 +40,8 @@ public class RoomDao implements IDao<RoomModel> {
 
     public List<RoomModel> getAllMemberRooms(ObjectId id) {
         return roomRepository.getAllMemberRooms(id);
+    }
+    public List<RoomModel> getFromUserName(String username) {
+        return null;
     }
 }

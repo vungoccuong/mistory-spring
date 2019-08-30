@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import Link from 'next/link';
+import { last } from 'rxjs/operators';
 function Summary({ content }) {
 	if (!content) return <></>;
 	if (typeof content === 'string') {
@@ -36,12 +37,17 @@ function Room({ name, lastMessage, updatedAt, avatar, _id }) {
 					<div className="gin-room-info">
 						<div className="gin-room-name">{name}</div>
 						<div className="gin-room-message">
-							<div className="gin-content">
-								<Summary content={lastMessage && lastMessage.content} />
-							</div>
-							<div className="gin-date">
-								{new Date(updatedAt).toLocaleTimeString()}
-							</div>
+							{lastMessage && (
+								<>
+									<div className="gin-content">
+										<Summary content={lastMessage.content} />
+									</div>
+									<div className="gin-date">
+										{lastMessage.date &&
+											new Date(lastMessage.date).toLocaleTimeString()}
+									</div>
+								</>
+							)}
 						</div>
 					</div>
 				</div>
