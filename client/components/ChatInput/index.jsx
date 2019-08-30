@@ -10,6 +10,8 @@ import { Subject } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
 import TypingBox from '../ChatBox/TypingBox';
 import FileUploader from './FileUploader';
+import { getStompConnection } from '../../utils/stomp';
+
 function ChatInput() {
 	const [value, setValue] = useState('');
 	const router = useRouter();
@@ -35,10 +37,11 @@ function ChatInput() {
 	};
 	const send = () => {
 		sendTyping(roomId, false);
-		getConnection().emitEvent(MESSAGE, {
-			content: value,
-			roomId,
-		});
+		getStompConnection().sendMessage(roomId, value);
+		// getConnection().emitEvent(MESSAGE, {
+		// 	content: value,
+		// 	roomId,
+		// });
 		setValue('');
 	};
 	const addEmoji = emoji => {
@@ -59,10 +62,11 @@ function ChatInput() {
 		return isTyping => subject.next(isTyping);
 	}, [roomId]);
 	const sendTyping = (room, isTyping) => {
-		getConnection().emitEvent(TYPING, {
-			room,
-			isTyping,
-		});
+		getStompConnection().sendTyping(room, isTyping);
+		// getConnection().emitEvent(TYPING, {
+		// 	room,
+		// 	isTyping,
+		// });
 	};
 	const onChangeValue = ({ target: { value } }) => {
 		onChange(value);
@@ -75,8 +79,8 @@ function ChatInput() {
 	return (
 		<div className="gin-chat-input">
 			<div>
-				<TypingBox />
-				<Emoji addEmoji={addEmoji} />
+				<TypingBox/>
+				<Emoji addEmoji={addEmoji}/>
 				<div className="gin-message-textarea">
 					<Input.TextArea
 						placeholder="Gõ gì đi ......."
@@ -86,7 +90,7 @@ function ChatInput() {
 					/>
 				</div>
 				<div className="gin-file-send">
-					<FileUploader />
+					<FileUploader/>
 					<Icon
 						type="export"
 						style={{ fontSize: 30, color: '#fff' }}

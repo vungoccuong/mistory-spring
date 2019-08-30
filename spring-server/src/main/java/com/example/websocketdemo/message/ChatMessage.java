@@ -1,24 +1,17 @@
-package com.example.websocketdemo.model;
+package com.example.websocketdemo.message;
 
-public class ChatMessage {
-    private MessageType type;
+import java.util.Date;
+
+public class ChatMessage implements IMessage {
+    private MessageTypes type = MessageTypes.TEXT;
     private String content;
     private String sender;
+    private Date date = new Date();
 
-    public enum MessageType {
-        CHAT,
-        JOIN,
-        LEAVE,
-        IS_ONLINE
-    }
-
-    public MessageType getType() {
+    public MessageTypes getType() {
         return type;
     }
 
-    public void setType(MessageType type) {
-        this.type = type;
-    }
 
     public String getContent() {
         return content;
@@ -34,5 +27,9 @@ public class ChatMessage {
 
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public Date getDate() {
+        return date;
     }
 }

@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface IDao<T> {
     List<T> getAll();
-    Optional<T> get(int id);
+    Optional<T> get(String id);
     void update(T record);
     void delete(T record);
 }

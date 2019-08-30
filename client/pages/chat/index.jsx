@@ -8,21 +8,22 @@ import ChatTool from '../../components/ChatTool';
 import { initChannel, updateLastMessage } from '../../redux/actions/channel';
 import { connect } from 'react-redux';
 import { loginSuccess } from '../../redux/actions/user';
-import { getConnection } from '../../utils/websocket';
-import { MESSAGE, ONLINE, TYPING } from '../../utils/evenTypes';
 import { useRouter } from 'next/router';
 import { pushMessage } from '../../redux/actions/message';
 import { pushTyping, updateOnlineState } from '../../redux/actions/room';
+import { getStompConnection } from '../../utils/stomp';
+import { ONLINE, TEXT, TYPING } from '../../utils/stompEventType';
+
 function Chat({
-	initChannel,
-	currentUser,
-	loginSuccess,
-	pushMessage,
-	updateLastMessage,
-	pushTyping,
-	updateOnlineState,
-	online,
-}) {
+				  initChannel,
+				  currentUser,
+				  loginSuccess,
+				  pushMessage,
+				  updateLastMessage,
+				  pushTyping,
+				  updateOnlineState,
+				  online,
+			  }) {
 	const router = useRouter();
 	const queryRoomId = router.query.roomId;
 	useEffect(() => {
@@ -32,8 +33,8 @@ function Chat({
 
 	useEffect(() => {
 		if (queryRoomId) {
-			getConnection()
-				.onEvent(MESSAGE, data => {
+			getStompConnection()
+				.onEvent(TEXT, data => {
 					const { room } = data;
 					if (room === queryRoomId) {
 						//
@@ -47,9 +48,11 @@ function Chat({
 						pushTyping(data);
 					}
 				})
-				.onEvent(ONLINE, data => {
-					updateOnlineState(data);
+				.onEvent(ONLINE, ({ online }) => {
+					console.log('fired');
+					updateOnlineState(online);
 				});
+			return () => getStompConnection().dispose();
 		}
 	}, [queryRoomId]);
 
@@ -58,13 +61,13 @@ function Chat({
 			<div className="chat">
 				<Row>
 					<Col md={5}>
-						<ChatList />
+						<ChatList/>
 					</Col>
 					<Col md={14}>
-						<ChatBox />
+						<ChatBox/>
 					</Col>
 					<Col md={5}>
-						<ChatTool />
+						<ChatTool/>
 					</Col>
 				</Row>
 			</div>

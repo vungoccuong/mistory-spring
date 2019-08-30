@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import Loading from '../Loading';
 import { getConnection } from '../../utils/websocket';
 import { ONLINE } from '../../utils/evenTypes';
+import { getStompConnection } from '../../utils/stomp';
 
 function RoomSummary({ rooms, online, room }) {
 	const [loading, setLoading] = useState(false);
@@ -20,13 +21,13 @@ function RoomSummary({ rooms, online, room }) {
 	useEffect(() => {
 		if (room) {
 			const friendUsername = room.friendUsername;
-			getConnection().emitEvent(ONLINE, friendUsername);
+			getStompConnection().checkIsOnline(friendUsername);
 		}
 	}, [rooms, roomId, room]);
 	return (
 		<div className="gin-room-summary">
 			{loading ? (
-				<Loading />
+				<Loading/>
 			) : (
 				<div className="gin-room-summary-container">
 					<Avatar style={{ color: '#444446', backgroundColor: '#ffffff' }} size={76}>

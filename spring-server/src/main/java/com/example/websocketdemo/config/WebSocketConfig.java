@@ -26,12 +26,15 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-import java.util.Optional;
 
 
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    private final UserDao userDao;
+    public WebSocketConfig(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -41,7 +44,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
-        registry.enableSimpleBroker("/topic");   // Enables a simple in-memory broker
+        registry.enableSimpleBroker("/topic", "/queue");   // Enables a simple in-memory broker
 
 
         //   Use this for enabling a Full featured broker like RabbitMQ
@@ -65,11 +68,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     HttpServletRequest servletRequest = servletServerRequest.getServletRequest();
                     Cookie token = WebUtils.getCookie(servletRequest, "sid");
                     if (token != null) {
-                        System.out.println("jwt is found");
                         attributes.put("token", token.getValue());
                         return true;
                     } else {
-                        System.out.println("jwt cant be found . closing this connection");
                         response.close();
                         return false;
                     }
@@ -95,14 +96,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     String token = (String) sessionAttributes.get("token");
                     try {
                         Claims claims = Auth.decodeJWT(token);
-                        Optional<UserModel> user = UserDao.getInstance().get(claims.getId());
-                        user.ifPresent(accessor::setUser);
+                        UserModel userModel = userDao.getByUserName(claims.getId());
+                        accessor.setUser(userModel);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
-
                 }
-
                 return message;
             }
         });

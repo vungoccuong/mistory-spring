@@ -1,28 +1,105 @@
 package com.example.websocketdemo.model;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.security.auth.Subject;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.Set;
-
+@Document(collection = "users")
 public class UserModel implements Principal {
 
 
-    private int _id;
-    private String _username;
-    private Set<String> _rooms;
+    @Id
+    private ObjectId id;
+    private String username;
+    private String fullName;
+    private String avatar;
+    private String hashPassword;
+    private String lastOnline;
+    private String createdAt;
 
-    //construct
-    public UserModel(int id ,String name) {
-        _id = id;
-        _username = name;
-        _rooms = new HashSet<>();
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getHashPassword() {
+        return hashPassword;
+    }
+
+    public void setHashPassword(String hashPassword) {
+        this.hashPassword = hashPassword;
+    }
+
+    public String getLastOnline() {
+        return lastOnline;
+    }
+
+    public void setLastOnline(String lastOnline) {
+        this.lastOnline = lastOnline;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    private String updatedAt;
+
+    public UserModel(ObjectId id, String username, String fullName, String avatar, String hashPassword, String lastOnline, String createdAt, String updatedAt) {
+        this.id = id;
+        this.username = username;
+        this.fullName = fullName;
+        this.avatar = avatar;
+        this.hashPassword = hashPassword;
+        this.lastOnline = lastOnline;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     //get and set
     @Override
     public String getName() {
-        return this._username;
+        return this.username;
     }
 
     @Override
@@ -30,19 +107,17 @@ public class UserModel implements Principal {
         return false;
     }
 
-    public Set<String> rooms() {
-        return _rooms;
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", hashPassword='" + hashPassword + '\'' +
+                ", lastOnline='" + lastOnline + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
+                '}';
     }
-
-    public void addNewRoom(String room) {
-        _rooms.add(room);
-    }
-    public int get_id() {
-        return _id;
-    }
-
-    public void set_id(int _id) {
-        this._id = _id;
-    }
-
 }

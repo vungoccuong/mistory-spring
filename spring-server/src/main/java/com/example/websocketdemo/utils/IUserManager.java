@@ -1,4 +1,4 @@
-package com.example.websocketdemo.config;
+package com.example.websocketdemo.utils;
 
 import java.util.Set;
 

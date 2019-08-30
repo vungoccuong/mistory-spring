@@ -1,18 +1,9 @@
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
-import SockJs from 'sockjs-client';
-import  * as StompJs from '@stomp/stompjs';
 import _ from 'lodash';
 import { decode, encode } from './index';
 import { message } from 'antd';
 import Emitter from './socketEmitter';
 
-const sock = new SockJs('http://localhost:8080/ws');
-const stompClient = StompJs.Stomp.over(sock);
-stompClient.connect({}, function() {
-	console.log('connected');
-}, function(err) {
-	console.log(err);
-});
 
 function url(s) {
 	const l = window.location;

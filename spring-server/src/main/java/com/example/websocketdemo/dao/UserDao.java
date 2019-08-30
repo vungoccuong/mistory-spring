@@ -1,42 +1,37 @@
 package com.example.websocketdemo.dao;
 
 import com.example.websocketdemo.model.UserModel;
+import com.example.websocketdemo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service("UserService")
 public class UserDao implements IDao<UserModel> {
-    //singleton
-    private static UserDao _instance;
-
-    public static UserDao getInstance() {
-        if (_instance == null) {
-            _instance = new UserDao();
-        }
-        return _instance;
-    }
-
+    private final UserRepository repository;
 
     private List<UserModel> _users;
 
-    private UserDao() {
+    public UserDao(UserRepository repository) {
         _users = new ArrayList<>();
-        _users.add(new UserModel(0, "hirosume"));
-        _users.add(new UserModel(1, "hirosume1"));
+        this.repository = repository;
     }
 
     @Override
     public List<UserModel> getAll() {
-        return _users;
+        return repository.findAll();
     }
 
     @Override
-    public Optional<UserModel> get(int id) {
-        return _users.stream().filter(user -> user.get_id() == id).findFirst();
+    public Optional<UserModel> get(String id) {
+        return _users.stream().filter(user -> user.getId().equals(id)).findFirst();
     }
-    public Optional<UserModel> get(String username) {
-        return _users.stream().filter(user -> user.getName().equals(username)).findFirst();
+
+    public UserModel getByUserName(String username) {
+        return repository.findOneByUsername(username);
     }
 
     @Override
@@ -44,7 +39,7 @@ public class UserDao implements IDao<UserModel> {
         int index = -1;
         for (UserModel user : _users) {
             index++;
-            if (user.get_id() == record.get_id()) {
+            if (user.getId().equals(record.getId())) {
                 _users.set(index, record);
                 break;
             }
@@ -53,6 +48,6 @@ public class UserDao implements IDao<UserModel> {
 
     @Override
     public void delete(UserModel record) {
-        get(record.get_id()).ifPresent(user -> _users.remove(user));
     }
+
 }
