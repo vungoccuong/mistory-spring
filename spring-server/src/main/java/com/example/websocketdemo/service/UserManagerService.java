@@ -1,5 +1,6 @@
-package com.example.websocketdemo.utils;
+package com.example.websocketdemo.service;
 
+import com.example.websocketdemo.utils.IUserManager;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -8,10 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 @Service("UserManager")
-public class UserManagerImpl implements IUserManager {
+public class UserManagerService implements IUserManager {
     private Map<String, Set<String>> map;
 
-    public UserManagerImpl() {
+    public UserManagerService() {
         this.map = new HashMap<>();
     }
 

@@ -20,7 +20,8 @@ function GroupInviter({ room: { type, _id, ...st } }) {
 		if (!value) return;
 		setLoading(true);
 		request({
-			url: '/v1/user/search?text=' + value,
+			url: '/spring/user/search?text=' + value,
+			withCredentials: true
 		})
 			.pipe(map(res => res.response))
 			.subscribe(data => {

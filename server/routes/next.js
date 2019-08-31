@@ -5,7 +5,7 @@ const roomModel = require('../models/room');
 module.exports = function(server, app) {
 	function checkLogin(unAuthPath) {
 		return (req, res) => {
-			if (req.isAuthenticated()) {
+			if (req.user) {
 				return app.render(req, res, req.path);
 			}
 			return app.render(req, res, unAuthPath || '/login');
@@ -14,11 +14,11 @@ module.exports = function(server, app) {
 	server.get('/', checkLogin());
 	server.get('/chat', checkLogin());
 	server.get('/chat/:roomId', async (req, res) => {
-		if (!req.isAuthenticated()) {
+		if (!req.user) {
 			return app.render(req, res, '/login');
 		}
 		const { roomId } = req.params;
-		if (!isRoomId(roomId) && req.isAuthenticated()) {
+		if (!isRoomId(roomId) && req.user) {
 			const room = await findOrCreateRoom(roomId, req.user._id);
 			if (room) return app.render(req, res, `/chat/${room._id}`);
 		}

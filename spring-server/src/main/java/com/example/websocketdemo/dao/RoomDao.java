@@ -44,4 +44,10 @@ public class RoomDao implements IDao<RoomModel> {
     public List<RoomModel> getFromUserName(String username) {
         return null;
     }
+    public RoomModel findByIdAndUserId(ObjectId id, ObjectId userId) {
+        return roomRepository.findByIdAndUserId(id, userId);
+    }
+    public  RoomModel findRoomWithTwoMembers(ObjectId one, ObjectId two) {
+        return roomRepository.findRoomWithMembers(one , two);
+    }
 }

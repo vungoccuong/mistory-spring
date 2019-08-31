@@ -9,7 +9,7 @@ export const initChannel = (action$, state$) =>
 		ofType(types.CHANNEL_LOADING),
 		concatMap(() =>
 			request({
-				url: '/v1/room',
+				url: '/spring/room/',
 			}).pipe(
 				map(res => actionsChannel.loadChannelSuccess(res.response)),
 				catchError(e => of(actionsChannel.loadChannelFailure(e.xhr.response.message))),
@@ -21,7 +21,7 @@ export const searchRoom = (action$, state$) =>
 		ofType(types.ROOM_SEARCHING),
 		concatMap(action =>
 			request({
-				url: '/v1/room/search?text=' + action.payload,
+				url: '/spring/room/search?text=' + action.payload,
 			}).pipe(
 				map(res => actionsChannel.loadChannelSuccess(res.response)),
 				catchError(e => of(actionsChannel.loadChannelFailure(e.xhr.response.message))),

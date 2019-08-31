@@ -2,7 +2,7 @@ package com.example.websocketdemo.config;
 
 import com.example.websocketdemo.dao.UserDao;
 import com.example.websocketdemo.model.UserModel;
-import com.example.websocketdemo.utils.AuthService;
+import com.example.websocketdemo.service.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
@@ -17,7 +17,9 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.util.WebUtils;
 
@@ -31,37 +33,30 @@ import java.util.Map;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final UserDao userDao;
+
     public WebSocketConfig(UserDao userDao) {
         this.userDao = userDao;
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000").withSockJS().setInterceptors(httpSessionHandshakeInterceptor());
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:3000").withSockJS()
+                .setInterceptors(httpSessionHandshakeInterceptor());
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
         registry.enableSimpleBroker("/topic", "/queue");   // Enables a simple in-memory broker
-
-
-        //   Use this for enabling a Full featured broker like RabbitMQ
-
-        /*
-        registry.enableStompBrokerRelay("/topic")
-                .setRelayHost("localhost")
-                .setRelayPort(61613)
-                .setClientLogin("guest")
-                .setClientPasscode("guest");
-        */
     }
 
     @Bean
     public HandshakeInterceptor httpSessionHandshakeInterceptor() {
         return new HandshakeInterceptor() {
             @Override
-            public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+            public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                           WebSocketHandler wsHandler, Map<String, Object> attributes)
+                    throws Exception {
                 if (request instanceof ServletServerHttpRequest) {
                     ServletServerHttpRequest servletServerRequest = (ServletServerHttpRequest) request;
                     HttpServletRequest servletRequest = servletServerRequest.getServletRequest();
@@ -78,7 +73,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             }
 
             @Override
-            public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
+            public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                       WebSocketHandler wsHandler, Exception exception) {
             }
         };
     }

@@ -16,23 +16,17 @@ public class MessageModel {
     private Date date = new Date();
     private MessageTypes type = MessageTypes.text;
 
-    public MessageModel(String sender, ObjectId senderId, String content, String room) {
+    public MessageModel(String sender, ObjectId senderId, String content, ObjectId room) {
         this.sender = sender;
         this.senderId = senderId;
         this.content = content;
-        this.room = new ObjectId(room);
-    }
-    public MessageModel(UserModel user, ChatMessage message, String room) {
-        this.sender = user.getUsername();
-        this.senderId = user.getId();
-        this.content = message.getContent();
-        this.room = new ObjectId(room);
+        this.room = (room);
     }
 
-    enum MessageTypes {
-        text,
-        file,
-        image
+    public static MessageModel fromUserModel(UserModel user, ChatMessage message, ObjectId room) {
+        MessageModel messageModel = new MessageModel(user.getUsername(), user.getId(), message.getContent(), room);
+        messageModel.senderId = user.getId();
+        return messageModel;
     }
 
     public ObjectId getId() {
@@ -89,5 +83,11 @@ public class MessageModel {
 
     public void setType(MessageTypes type) {
         this.type = type;
+    }
+
+    public enum MessageTypes {
+        text,
+        file,
+        image
     }
 }

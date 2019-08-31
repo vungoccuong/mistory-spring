@@ -21,6 +21,7 @@ if (onlyServer) {
 		_init();
 	});
 }
+
 function _init() {
 	const expressServer = _initExpress();
 	expressServer.nextApp = app;
@@ -31,12 +32,14 @@ function _init() {
 		console.log(`server ready on : ${port}`);
 	});
 }
+
 function _initExpress() {
 	const server = express();
 	_initBaseMiddleware(server);
 	_initRouter(server);
 	return server;
 }
+
 function _initBaseMiddleware(server) {
 	server.use(express.static(path.join(__dirname, 'public')));
 	server.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -45,10 +48,16 @@ function _initBaseMiddleware(server) {
 	server.use(express.urlencoded({ extended: false }));
 	server.use(cookieParser());
 	server.use(sessionParser);
-	server.use(passport.initialize());
-	server.use(passport.session());
+	server.use(require('./server/middlewares/jwt-middleware'));
+	// server.use(passport.initialize());
+	// server.use(passport.session());
 }
+
 function _initRouter(server) {
+	server.use('/spring', require('http-proxy-middleware')({
+		target: 'http://localhost:8080',
+		changeOrigin: true,
+	}));
 	server.use('/v1', require('./server/routes'));
 	require('./server/routes/next')(server, app);
 	server.get('*', (req, res) => {

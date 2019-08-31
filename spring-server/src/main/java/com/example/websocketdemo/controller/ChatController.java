@@ -1,14 +1,14 @@
 package com.example.websocketdemo.controller;
 
 import com.example.websocketdemo.dao.RoomDao;
-import com.example.websocketdemo.dao.UserDao;
 import com.example.websocketdemo.exceptions.RoomNotFoundException;
 import com.example.websocketdemo.message.*;
 import com.example.websocketdemo.model.MessageModel;
 import com.example.websocketdemo.model.RoomModel;
 import com.example.websocketdemo.model.UserModel;
-import com.example.websocketdemo.utils.ChatUtil;
+import com.example.websocketdemo.service.ChatService;
 import com.example.websocketdemo.utils.IUserManager;
+import org.bson.types.ObjectId;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -22,16 +22,17 @@ import java.util.List;
 
 @Controller
 public class ChatController {
-    private SimpMessagingTemplate template;
     private final RoomDao roomDao;
     private final IUserManager userManager;
-    private final ChatUtil chatUtil;
+    private final ChatService chatService;
+    private SimpMessagingTemplate template;
 
-    public ChatController(SimpMessagingTemplate template, RoomDao roomDao, IUserManager userManager, ChatUtil chatUtil) {
+    public ChatController(SimpMessagingTemplate template, RoomDao roomDao, IUserManager userManager,
+                          ChatService chatService) {
         this.template = template;
         this.roomDao = roomDao;
         this.userManager = userManager;
-        this.chatUtil = chatUtil;
+        this.chatService = chatService;
     }
 
     @MessageMapping("/chat/room")
@@ -50,12 +51,14 @@ public class ChatController {
 
     @MessageMapping("/chat/{roomId}/message")
     @SendTo("/topic/{roomId}")
-    public IMessage sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String roomId, SimpMessageHeaderAccessor accessor) throws RoomNotFoundException {
-        RoomModel roomModel = chatUtil.getRoomModel(roomId);
+    public IMessage sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String roomId,
+                                SimpMessageHeaderAccessor accessor)
+            throws RoomNotFoundException {
+        RoomModel roomModel = chatService.getRoomModel(roomId);
         UserModel user = (UserModel) accessor.getUser();
         assert user != null;
-        MessageModel message = new MessageModel(user, chatMessage, roomId);
-        chatUtil.saveAndUpdateLastMessage(message, user, roomModel);
+        MessageModel message = MessageModel.fromUserModel(user, chatMessage, new ObjectId(roomId));
+        chatService.saveAndUpdateLastMessage(message, user, roomModel);
         chatMessage.setSender(user.getName());
         return chatMessage;
     }

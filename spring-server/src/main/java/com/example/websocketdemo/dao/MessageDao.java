@@ -2,6 +2,7 @@ package com.example.websocketdemo.dao;
 
 import com.example.websocketdemo.model.MessageModel;
 import com.example.websocketdemo.repository.MessageRepository;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 @Service("MessageService")
 public class MessageDao implements IDao<MessageModel> {
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
 
     public MessageDao(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
@@ -22,7 +23,8 @@ public class MessageDao implements IDao<MessageModel> {
 
     @Override
     public Optional<MessageModel> get(String id) {
-        return Optional.empty();
+        var a = messageRepository.findById((id));
+        return a;
     }
 
     @Override
@@ -37,5 +39,8 @@ public class MessageDao implements IDao<MessageModel> {
 
     public MessageModel insert(MessageModel record) {
         return this.messageRepository.insert(record);
+    }
+    public List<MessageModel> getInRoom(ObjectId id) {
+        return this.messageRepository.findByRoomId(id);
     }
 }

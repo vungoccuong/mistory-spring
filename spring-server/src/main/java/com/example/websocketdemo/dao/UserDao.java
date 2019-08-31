@@ -2,7 +2,7 @@ package com.example.websocketdemo.dao;
 
 import com.example.websocketdemo.model.UserModel;
 import com.example.websocketdemo.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,11 +27,19 @@ public class UserDao implements IDao<UserModel> {
 
     @Override
     public Optional<UserModel> get(String id) {
-        return _users.stream().filter(user -> user.getId().equals(id)).findFirst();
+        return repository.findById(id);
     }
 
     public UserModel getByUserName(String username) {
         return repository.findOneByUsername(username);
+    }
+
+    public UserModel create(String username, String fullName, String hashPassword) {
+        UserModel userModel = new UserModel();
+        userModel.setFullName(fullName);
+        userModel.setUsername(username);
+        userModel.setHashPassword(hashPassword);
+        return this.repository.insert(userModel);
     }
 
     @Override
@@ -48,6 +56,10 @@ public class UserDao implements IDao<UserModel> {
 
     @Override
     public void delete(UserModel record) {
+    }
+
+    public List<UserModel> searchBy(String text, int limit) {
+        return this.repository.searchBy(text, new PageRequest(0, limit));
     }
 
 }

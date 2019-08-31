@@ -3,8 +3,8 @@ package com.example.websocketdemo.config;
 import com.example.websocketdemo.dao.UserDao;
 import com.example.websocketdemo.filter.JwtAuthenticationFilter;
 import com.example.websocketdemo.filter.JwtLoginFilter;
+import com.example.websocketdemo.service.AuthService;
 import com.example.websocketdemo.service.UserAuthService;
-import com.example.websocketdemo.utils.AuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -34,22 +35,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.userDao = userDao;
         this.userAuthService = userAuthService;
     }
+
     @Bean
-    CorsConfigurationSource corsConfigurationSource()
-    {
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**/*", configuration);
         return source;
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/user/logon").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtLoginFilter("/user/login", authenticationManager()),

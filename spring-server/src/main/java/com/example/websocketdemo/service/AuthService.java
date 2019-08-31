@@ -1,13 +1,15 @@
-package com.example.websocketdemo.utils;
+package com.example.websocketdemo.service;
 
 import com.example.websocketdemo.dao.UserDao;
 import com.example.websocketdemo.model.UserModel;
+import com.example.websocketdemo.utils.CommonUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -21,7 +23,7 @@ import java.util.Collections;
 @Service("AuthService")
 public class AuthService {
     private static final String Secret_key = "12345555555555551234555555555555555555";
-
+    private static BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     private static String createJwt(String id) throws UnsupportedEncodingException {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -51,6 +53,7 @@ public class AuthService {
     public static void addAuthentication(HttpServletResponse res, String username) throws UnsupportedEncodingException {
         String JWT = createJwtFromUsername(username);
         res.addCookie(new Cookie("sid", JWT));
+        res.setHeader("sid", JWT);
     }
 
     public static Authentication getAuthentication(HttpServletRequest request, UserDao userDao) {
@@ -67,4 +70,7 @@ public class AuthService {
         }
     }
 
+    public static String hashPassword(String password) {
+        return bCryptPasswordEncoder.encode(password);
+    }
 }

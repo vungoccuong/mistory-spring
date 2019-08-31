@@ -4,24 +4,37 @@ import { map, mergeMap, catchError } from 'rxjs/operators';
 import { request } from 'universal-rxjs-ajax';
 import { of } from 'rxjs';
 import * as userActions from '../actions/user';
-
+function setCookie(name, value, days) {
+	let expires = '';
+	if (days) {
+		let date = new Date();
+		date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+		expires = '; expires=' + date.toUTCString();
+	}
+	document.cookie = name + '=' + (value || '') + expires + '; path=/';
+}
 export const login = ($action, $state) =>
 	$action.pipe(
 		ofType(types.PERFORM_LOGIN),
 		mergeMap(action =>
 			request({
-				url: 'http://localhost:8080/user/login',
+				url: 'http://localhost:8080/spring/user/login',
 				method: 'POST',
 				body: action.payload,
 			}).pipe(
 				map(response => {
-					window.location.href = '/';
-					// return userActions.loginSuccess(response.response);
+					response.response && setCookie('sid', response.response.jwt);
+					setTimeout(() => {
+						// window.location.href = '/';
+					}, 100);
+					return userActions.loginSuccess(response.response);
 				}),
 				catchError(error =>
 					of(
 						userActions.loginFailure(
-							error.xhr.response && error.xhr.response.message || error.xhr.statusText,
+							console.log(error) ||
+								(error.xhr.response && error.xhr.response.message) ||
+								error.xhr.statusText,
 						),
 					),
 				),

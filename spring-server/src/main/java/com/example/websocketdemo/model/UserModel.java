@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.security.auth.Subject;
 import java.security.Principal;
+import java.util.Date;
+
 @Document(collection = "users")
 public class UserModel implements Principal {
 
@@ -17,7 +19,23 @@ public class UserModel implements Principal {
     private String avatar;
     private String hashPassword;
     private String lastOnline;
-    private String createdAt;
+    private Date createdAt = new Date();
+    private Date updatedAt = new Date();
+
+    public UserModel() {
+    }
+
+    public UserModel(ObjectId id, String username, String fullName, String avatar, String hashPassword,
+                     String lastOnline, Date createdAt, Date updatedAt) {
+        this.id = id;
+        this.username = username;
+        this.fullName = fullName;
+        this.avatar = avatar;
+        this.hashPassword = hashPassword;
+        this.lastOnline = lastOnline;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public ObjectId getId() {
         return id;
@@ -67,32 +85,19 @@ public class UserModel implements Principal {
         this.lastOnline = lastOnline;
     }
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    private String updatedAt;
-
-    public UserModel(ObjectId id, String username, String fullName, String avatar, String hashPassword, String lastOnline, String createdAt, String updatedAt) {
-        this.id = id;
-        this.username = username;
-        this.fullName = fullName;
-        this.avatar = avatar;
-        this.hashPassword = hashPassword;
-        this.lastOnline = lastOnline;
-        this.createdAt = createdAt;
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 

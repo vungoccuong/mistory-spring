@@ -1,4 +1,4 @@
-package com.example.websocketdemo.utils;
+package com.example.websocketdemo.service;
 
 import com.example.websocketdemo.dao.MessageDao;
 import com.example.websocketdemo.dao.RoomDao;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 @Service("ChatUtil")
-public class ChatUtil {
+public class ChatService {
     private RoomDao roomDao;
     private MessageDao messageDao;
-    public ChatUtil(RoomDao roomDao, MessageDao messageDao) {
+    public ChatService(RoomDao roomDao, MessageDao messageDao) {
         this.roomDao = roomDao;
         this.messageDao = messageDao;
     }

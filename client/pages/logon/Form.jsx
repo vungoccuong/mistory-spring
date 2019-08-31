@@ -18,7 +18,7 @@ const _Form = ({ form }) => {
 			$subject.pipe(
 				concatMap(body =>
 					request({
-						url: '/v1/user/logon',
+						url: '/spring/user/logon',
 						method: 'POST',
 						body,
 					})

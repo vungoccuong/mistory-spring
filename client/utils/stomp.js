@@ -5,7 +5,7 @@ import { message } from 'antd';
 import Emitter from './socketEmitter';
 import { ONLINE, TEXT, TYPING } from './stompEventType';
 
-const sock = new SockJs('http://localhost:8080/ws');
+const sock = new SockJs('http://localhost:8080/spring/ws');
 const stompClient = StompJs.Stomp.over(sock);
 const emitter = new Emitter();
 let isInit = false;

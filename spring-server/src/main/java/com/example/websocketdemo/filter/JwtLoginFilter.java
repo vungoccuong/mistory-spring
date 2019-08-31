@@ -1,8 +1,7 @@
 package com.example.websocketdemo.filter;
 
 import com.example.websocketdemo.model.AccountCredentials;
-import com.example.websocketdemo.model.UserModel;
-import com.example.websocketdemo.utils.AuthService;
+import com.example.websocketdemo.service.AuthService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,9 +39,9 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
                                             FilterChain chain, Authentication authResult) throws IOException {
         AuthService.addAuthentication(response, authResult.getName());
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("content-type","application/json; charset=utf-8");
+        response.setHeader("content-type", "application/json; charset=utf-8");
         response.getWriter().write(String
-                .format("{ \"username\": %s, \"fullName\": %s, \"avatar\": %s  }", authResult.getName(),
-                        authResult.getName(), authResult.getName()));
+                .format("{ \"username\": \"%s\", \"fullName\": \"%s\", \"avatar\": \"%s\", \"jwt\": \"%s\"  }", authResult.getName(),
+                        authResult.getName(), authResult.getName(), response.getHeader("sid").toString()));
     }
 }
