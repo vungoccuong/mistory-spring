@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { message } from 'antd';
 import Emitter from './socketEmitter';
 import { ONLINE, TEXT, TYPING } from './stompEventType';
+import { header } from 'express-validator';
 
 const sock = new SockJs('http://localhost:8080/spring/ws');
 const stompClient = StompJs.Stomp.over(sock);
@@ -88,6 +89,9 @@ stompClient.sendTyping = function(room, isTyping) {
 };
 stompClient.checkIsOnline = function(username) {
 	this.send(`/app/online`, {}, JSON.stringify({ username }));
+};
+stompClient.sendFile = function(fileId, room) {
+	this.send(`/app/chat/${room}/file`, header, JSON.stringify({ id: fileId }));
 };
 stompClient.onEvent = function(event, cb = _.noop) {
 	emitter.listen(event, cb);

@@ -15,6 +15,7 @@ public class MessageModel {
     private ObjectId room;
     private Date date = new Date();
     private MessageTypes type = MessageTypes.text;
+    private FileModel file;
 
     public MessageModel(String sender, ObjectId senderId, String content, ObjectId room) {
         this.sender = sender;
@@ -83,6 +84,14 @@ public class MessageModel {
 
     public void setType(MessageTypes type) {
         this.type = type;
+    }
+
+    public FileModel getFile() {
+        return file;
+    }
+
+    public void setFile(FileModel file) {
+        this.file = file;
     }
 
     public enum MessageTypes {

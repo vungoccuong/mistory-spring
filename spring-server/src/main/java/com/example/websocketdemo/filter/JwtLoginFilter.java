@@ -1,6 +1,6 @@
 package com.example.websocketdemo.filter;
 
-import com.example.websocketdemo.model.AccountCredentials;
+import com.example.websocketdemo.entities.AccountCredentials;
 import com.example.websocketdemo.service.AuthService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

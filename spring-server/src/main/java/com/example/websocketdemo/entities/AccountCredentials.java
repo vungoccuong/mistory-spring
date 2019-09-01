@@ -1,4 +1,4 @@
-package com.example.websocketdemo.model;
+package com.example.websocketdemo.entities;
 
 public class AccountCredentials {
     private String username;

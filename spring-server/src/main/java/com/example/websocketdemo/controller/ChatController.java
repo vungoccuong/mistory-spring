@@ -1,8 +1,10 @@
 package com.example.websocketdemo.controller;
 
+import com.example.websocketdemo.dao.FileDao;
 import com.example.websocketdemo.dao.RoomDao;
 import com.example.websocketdemo.exceptions.RoomNotFoundException;
 import com.example.websocketdemo.message.*;
+import com.example.websocketdemo.model.FileModel;
 import com.example.websocketdemo.model.MessageModel;
 import com.example.websocketdemo.model.RoomModel;
 import com.example.websocketdemo.model.UserModel;
@@ -19,20 +21,23 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class ChatController {
     private final RoomDao roomDao;
     private final IUserManager userManager;
     private final ChatService chatService;
+    private final FileDao fileDao;
     private SimpMessagingTemplate template;
 
     public ChatController(SimpMessagingTemplate template, RoomDao roomDao, IUserManager userManager,
-                          ChatService chatService) {
+                          ChatService chatService, FileDao fileDao) {
         this.template = template;
         this.roomDao = roomDao;
         this.userManager = userManager;
         this.chatService = chatService;
+        this.fileDao = fileDao;
     }
 
     @MessageMapping("/chat/room")
@@ -79,14 +84,16 @@ public class ChatController {
         template.convertAndSendToUser(headerAccessor.getUser().getName(), "/queue/reply", message);
     }
 
-    @MessageMapping("/{roomId}/chat.sendFile")
-    public IMessage sendFile(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        return chatMessage;
-    }
 
     @MessageMapping("/chat/{roomId}/file")
     @SendTo("/topic/{roomId}")
     public IMessage file(@Payload FileMessage message, SimpMessageHeaderAccessor headerAccessor) {
+        Optional<FileModel> fileModelOptional= fileDao.get(message.getId());
+        if(fileModelOptional.isPresent()) {
+            FileModel fileModel = fileModelOptional.get();
+
+        }
+        System.out.println(message.getId());
         return message;
     }
 }

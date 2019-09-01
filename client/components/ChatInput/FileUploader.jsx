@@ -9,6 +9,8 @@ import { getConnection } from '../../utils/websocket';
 import { FILE } from '../../utils/evenTypes';
 import { useRouter } from 'next/router';
 import { of } from 'rxjs';
+import { getStompConnection } from '../../utils/stomp';
+
 const Container = styled.div`
 	> input {
 		width: 0;
@@ -16,6 +18,7 @@ const Container = styled.div`
 	}
 	width: 30px;
 `;
+
 function FileUploader(props) {
 	const router = useRouter();
 	const roomId = router.query.roomId;
@@ -31,12 +34,12 @@ function FileUploader(props) {
 			body: form,
 		})
 			.pipe(
-				map(res => res.response),
+				map(res => res.response && res.response.id),
 				catchError(err => of(err.xhr.response)),
 			)
 			.subscribe(id =>
 				typeof id === 'string'
-					? getConnection().emitEvent(FILE, { fileId: id, roomId })
+					? getStompConnection().sendFile(id, roomId)
 					: message.error('Gặp lỗi khi tải tệp'),
 			);
 	};
@@ -46,8 +49,8 @@ function FileUploader(props) {
 	};
 	return (
 		<Container>
-			<Icon onClick={onClick} type="paper-clip" style={{ fontSize: 30, color: '#fff' }} />
-			<input type="file" ref={ref} onChange={onChange} />
+			<Icon onClick={onClick} type="paper-clip" style={{ fontSize: 30, color: '#fff' }}/>
+			<input type="file" ref={ref} onChange={onChange}/>
 		</Container>
 	);
 }
