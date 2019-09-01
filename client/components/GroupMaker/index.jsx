@@ -11,10 +11,10 @@ function GroupMaker(props) {
 	const createGroup = useCallback(
 		() =>
 			request({
-				url: '/v1/group',
+				url: '/spring/group/',
 				method: 'POST',
 			}).pipe(
-				map(res => ({ status: 'success', data: res.response })),
+				map(res => console.log(res) || ({ status: 'success', data: res.response })),
 				catchError(err => of({ status: 'error', data: err.xhr.response })),
 			),
 		[],
@@ -25,7 +25,7 @@ function GroupMaker(props) {
 			onOk() {
 				createGroup().subscribe(({ status, data }) => {
 					if (status === 'success') {
-						router.push(`/chat/${data}`);
+						router.push(`/chat/${data._id}`);
 					} else {
 						message.error('Tạo phòng gặp lỗi');
 					}

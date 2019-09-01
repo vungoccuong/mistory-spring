@@ -37,13 +37,13 @@ function MessagesBox({ messages }) {
 	const scrollTop = (chat, height) => (chat.scrollTop = height);
 	const groups = useMemo(() => {
 		let grs = [];
-		messages.sort((a, b) => a.date.localeCompare(b.date));
+		messages.sort((a, b) => a.date - b.date);
 		return messages.map((message, index) => {
 			grs.push(message);
 			if (!messages[index + 1] || messages[index + 1].sender !== message.sender) {
 				let _temp = grs;
 				grs = [];
-				return <MessageGroup key={index} messages={_temp} />;
+				return <MessageGroup key={index} messages={_temp}/>;
 			}
 			return null;
 		});

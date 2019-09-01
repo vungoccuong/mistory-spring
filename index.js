@@ -41,6 +41,11 @@ function _initExpress() {
 }
 
 function _initBaseMiddleware(server) {
+	server.use('/spring', require('http-proxy-middleware')({
+		target: 'http://localhost:8080',
+		changeOrigin: true,
+		secure: false,
+	}));
 	server.use(express.static(path.join(__dirname, 'public')));
 	server.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 	server.use(logger('dev'));
@@ -54,10 +59,7 @@ function _initBaseMiddleware(server) {
 }
 
 function _initRouter(server) {
-	server.use('/spring', require('http-proxy-middleware')({
-		target: 'http://localhost:8080',
-		changeOrigin: true,
-	}));
+
 	server.use('/v1', require('./server/routes'));
 	require('./server/routes/next')(server, app);
 	server.get('*', (req, res) => {

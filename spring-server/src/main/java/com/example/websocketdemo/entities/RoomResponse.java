@@ -80,7 +80,9 @@ public class RoomResponse implements Responsible {
     }
 
     public void makeLastMessage(MessageDao messageDao) {
-        messageDao.get(model.getLastMessage().toString()).ifPresent(this::setLastMessage);
+        if (model.getLastMessage() != null) {
+            messageDao.get(model.getLastMessage().toString()).ifPresent(this::setLastMessage);
+        }
     }
 
     public void makeMembers(UserDao userDao) {
@@ -123,7 +125,7 @@ public class RoomResponse implements Responsible {
         } else {
             return members.stream().filter(member -> !member.getUsername().equals(currentUser))
                     .map(UserResponse::getFullName)
-                    .reduce("", (acc, el) -> acc +  el.substring(0, 1).toUpperCase());
+                    .reduce("", (acc, el) -> acc + el.substring(0, 1).toUpperCase());
         }
     }
 

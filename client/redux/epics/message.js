@@ -9,7 +9,7 @@ export const initMessage = (action$, state$) =>
 		ofType(types.ROOM_MESSAGES_LOADING),
 		concatMap(action =>
 			request({
-				url: `/v1/message/${action.payload}`,
+				url: `/spring/message/${action.payload}`,
 			}).pipe(
 				map(res => actionsMessage.messageLoadSuccess(res.response)),
 				catchError(e => of(actionsMessage.messageLoadFail(e.xhr.response.message))),

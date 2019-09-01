@@ -36,12 +36,13 @@ function GroupInviter({ room: { type, _id, ...st } }) {
 	};
 	const onChange = ({ key }) => {
 		request({
-			url: '/v1/group/invite',
+			url: '/spring/group/invite',
 			method: 'POST',
 			body: {
 				userId: key,
 				roomId: _id,
 			},
+			withCredentials: true
 		})
 			.pipe(map(res => res.response))
 			.subscribe(({ status, data }) => status === 'success' && addMember(data));

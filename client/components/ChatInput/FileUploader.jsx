@@ -26,7 +26,7 @@ function FileUploader(props) {
 		const form = new FormData();
 		form.append('file', file);
 		request({
-			url: '/v1/file',
+			url: '/spring/file/',
 			method: 'post',
 			body: form,
 		})

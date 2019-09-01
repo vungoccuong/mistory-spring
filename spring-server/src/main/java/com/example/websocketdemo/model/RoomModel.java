@@ -13,7 +13,7 @@ public class RoomModel {
     private ObjectId id;
     private String name;
     private List<ObjectId> members;
-    private ObjectId objectId;
+    private ObjectId creator;
     private String type;
     private ObjectId lastMessage;
     private Date createdAt = new Date();
@@ -43,12 +43,12 @@ public class RoomModel {
         this.members = members;
     }
 
-    public ObjectId getObjectId() {
-        return objectId;
+    public ObjectId getCreator() {
+        return creator;
     }
 
-    public void setObjectId(ObjectId objectId) {
-        this.objectId = objectId;
+    public void setCreator(ObjectId creator) {
+        this.creator = creator;
     }
 
     public String getType() {
