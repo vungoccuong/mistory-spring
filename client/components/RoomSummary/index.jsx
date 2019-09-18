@@ -1,11 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, Tag, Tooltip } from 'antd';
 import './index.scss';
 import { connect } from 'react-redux';
 import { useRouter } from 'next/router';
 import Loading from '../Loading';
-import { getConnection } from '../../utils/websocket';
-import { ONLINE } from '../../utils/evenTypes';
 import { getStompConnection } from '../../utils/stomp';
 
 function RoomSummary({ rooms, online, room }) {

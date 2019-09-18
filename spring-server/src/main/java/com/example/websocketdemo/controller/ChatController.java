@@ -29,7 +29,7 @@ public class ChatController {
     private final IUserManager userManager;
     private final ChatService chatService;
     private final FileDao fileDao;
-    private SimpMessagingTemplate template;
+    private final SimpMessagingTemplate template;
 
     public ChatController(SimpMessagingTemplate template, RoomDao roomDao, IUserManager userManager,
                           ChatService chatService, FileDao fileDao) {

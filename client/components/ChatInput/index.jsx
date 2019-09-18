@@ -1,9 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import './index.scss';
 import { Icon, Input } from 'antd';
-import { getConnection } from '../../utils/websocket';
 import { useRouter } from 'next/router';
-import { MESSAGE, TYPING } from '../../utils/evenTypes';
 import 'emoji-mart/css/emoji-mart.css';
 import Emoji from '../Emoji';
 import { Subject } from 'rxjs';
@@ -38,10 +36,6 @@ function ChatInput() {
 	const send = () => {
 		sendTyping(roomId, false);
 		getStompConnection().sendMessage(roomId, value);
-		// getConnection().emitEvent(MESSAGE, {
-		// 	content: value,
-		// 	roomId,
-		// });
 		setValue('');
 	};
 	const addEmoji = emoji => {

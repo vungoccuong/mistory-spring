@@ -1,16 +1,11 @@
 import React, { useRef } from 'react';
 import { Icon, message } from 'antd';
 import styled from 'styled-components';
-// import { getConnection } from '../../utils/websocket';
-// import { FILE } from '../../utils/evenTypes';
 import { request } from 'universal-rxjs-ajax';
 import { catchError, map } from 'rxjs/operators';
-import { getConnection } from '../../utils/websocket';
-import { FILE } from '../../utils/evenTypes';
 import { useRouter } from 'next/router';
 import { of } from 'rxjs';
 import { getStompConnection } from '../../utils/stomp';
-
 const Container = styled.div`
 	> input {
 		width: 0;
