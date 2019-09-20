@@ -17,7 +17,7 @@ public class FileDao implements IDao<FileModel> {
 
     @Override
     public List<FileModel> getAll() {
-        return null;
+        return fileRepository.findAll();
     }
 
     @Override

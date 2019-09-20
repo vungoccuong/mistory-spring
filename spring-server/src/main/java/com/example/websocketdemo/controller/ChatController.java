@@ -88,12 +88,12 @@ public class ChatController {
     @MessageMapping("/chat/{roomId}/file")
     @SendTo("/topic/{roomId}")
     public IMessage file(@Payload FileMessage message, SimpMessageHeaderAccessor headerAccessor) {
-        Optional<FileModel> fileModelOptional= fileDao.get(message.getId());
-        if(fileModelOptional.isPresent()) {
-            FileModel fileModel = fileModelOptional.get();
-
-        }
-        System.out.println(message.getId());
+//        Optional<FileModel> fileModelOptional= fileDao.get(message.getId());
+//        if(fileModelOptional.isPresent()) {
+//            FileModel fileModel = fileModelOptional.get();
+//        }
+//        System.out.println(message.getId());
+        fileDao.getAll();
         return message;
     }
 }

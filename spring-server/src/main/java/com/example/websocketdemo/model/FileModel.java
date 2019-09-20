@@ -20,6 +20,22 @@ public class FileModel {
     private Date createdAt = new Date();
     private Date updatedAt = new Date();
 
+    public FileModel() {
+
+    }
+
+    public FileModel(ObjectId id, String originalname, String encoding, String mimetype, long size, ObjectId uploader,
+                     Date createdAt, Date updatedAt) {
+        this.id = id;
+        this.originalname = originalname;
+        this.encoding = encoding;
+        this.mimetype = mimetype;
+        this.size = size;
+        this.uploader = uploader;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
     public FileModel(String originalname, String encoding, String mimetype, long size, String destination,
                      String filename, String path, ObjectId uploader, Date createdAt, Date updatedAt) {
         this.originalname = originalname;
@@ -33,6 +49,7 @@ public class FileModel {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
 
     private FileModel(String originalname, String contentType, long size) {
         this.originalname = originalname;
