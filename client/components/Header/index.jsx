@@ -1,10 +1,32 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Avatar, Button, Dropdown, Icon, Layout, Menu } from 'antd';
 const AntHeader = Layout.Header;
 import './index.scss';
 import { connect } from 'react-redux';
 import Link from 'next/link';
+import { request } from 'universal-rxjs-ajax';
+import { useRouter } from 'next/router';
+async function logout() {
+	if (process.browser) {
+		const res = await request({
+			url: '/spring/user/logout',
+			withCredentials: true,
+		}).toPromise();
+		console.log(res);
+		return true;
+	}
+	return false;
+}
+
 function Header({ username, avatar, fullName }) {
+	const router = useRouter();
+	const onLogout = useCallback(() => {
+		logout().then(result => {
+			if (result) {
+				router.replace('/login');
+			}
+		});
+	});
 	const menu = useMemo(
 		() => (
 			<Menu>
@@ -17,14 +39,15 @@ function Header({ username, avatar, fullName }) {
 					Fn: {fullName}
 				</Menu.Item>
 				<Menu.Item key="3">
-					<Link href="/v1/user/logout">
+					<div onClick={onLogout}>
 						<a>Đăng xuất</a>
-					</Link>
+					</div>
 				</Menu.Item>
 			</Menu>
 		),
 		[username, avatar, fullName],
 	);
+
 	return (
 		<AntHeader className="gin-header">
 			<div className="left-bar">

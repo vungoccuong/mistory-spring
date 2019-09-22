@@ -1,25 +1,6 @@
 version: '3'
 services:
-  node:
-    container_name: node-server
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    working_dir: /usr/app
-    volumes:
-      - ./:/usr/app
-      - /usr/app/node_modules
-    tty: true
-    command: [/bin/bash,/usr/app/start.sh]
-    ports:
-      - '80:3000'
-    environment:
-      - DOCKER=1
-  mongo:
-    image: mongo
-    ports:
-      - "27017:27017"
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
+    mongo:
+        image: mongo
+        ports:
+            - '27017:27017'

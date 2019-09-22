@@ -14,12 +14,21 @@ function getFriendUsername(memberNames, username) {
 	}
 	return result;
 }
+function inboxAndContains(room, username, roomId) {
+	if (room.type === 'group') return false;
+	const members = room.members;
+	return (
+		members.length === 2 && getFriendUsername(members.map(i => i.username), username) === roomId
+	);
+}
 function ChatTool({ rooms, username }) {
 	const router = useRouter();
 	const roomId = router.query.roomId;
 	let room = useMemo(() => {
 		if (!rooms) return {};
-		const r = rooms.find(room => room._id === roomId);
+		const r = rooms.find(
+			room => room._id === roomId || inboxAndContains(room, username, roomId),
+		);
 		if (!r) return {};
 		const members = r.members;
 		const friendUsername = getFriendUsername(members.map(i => i.username), username);

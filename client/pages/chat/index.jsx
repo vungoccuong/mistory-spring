@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MainLayout from '../../layouts/MainLayout';
 import './index.scss';
 import { Col, Row } from 'antd';
@@ -13,24 +13,52 @@ import { pushMessage } from '../../redux/actions/message';
 import { pushTyping, updateOnlineState } from '../../redux/actions/room';
 import { getStompConnection } from '../../utils/stomp';
 import { ONLINE, TEXT, TYPING } from '../../utils/stompEventType';
-
+import { request } from 'universal-rxjs-ajax';
+import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs';
+async function getCurrentUser() {
+	if (process.browser) {
+		const user = await request({
+			url: '/spring/user/current',
+			withCredentials: true,
+		})
+			.pipe(
+				map(res => res.response),
+				catchError(() => of({})),
+			)
+			.toPromise();
+		const { fullName, username, avatar } = user;
+		return { fullName, username, avatar };
+	}
+	return {};
+}
 function Chat({
-				  initChannel,
-				  currentUser,
-				  loginSuccess,
-				  pushMessage,
-				  updateLastMessage,
-				  pushTyping,
-				  updateOnlineState,
-				  online,
-			  }) {
+	initChannel,
+	loginSuccess,
+	pushMessage,
+	updateLastMessage,
+	pushTyping,
+	updateOnlineState,
+}) {
 	const router = useRouter();
+	const [isInit, setInit] = useState(false);
 	const queryRoomId = router.query.roomId;
 	useEffect(() => {
-		initChannel();
-		loginSuccess(currentUser);
+		getCurrentUser().then(user => {
+			if (!user || !user.username) {
+				router.replace('/login');
+			}
+			if (user && user.username) {
+				setInit(true);
+			}
+			loginSuccess(user);
+		});
 	}, []);
-
+	useEffect(() => {
+		if (isInit) {
+			initChannel();
+		}
+	}, [isInit]);
 	useEffect(() => {
 		if (queryRoomId) {
 			getStompConnection()
@@ -54,20 +82,20 @@ function Chat({
 				});
 			return () => getStompConnection().dispose();
 		}
-	}, [queryRoomId]);
-
+	}, [queryRoomId, isInit]);
+	if (!isInit) return <MainLayout />;
 	return (
 		<MainLayout>
 			<div className="chat">
 				<Row>
 					<Col md={5}>
-						<ChatList/>
+						<ChatList />
 					</Col>
 					<Col md={14}>
-						<ChatBox/>
+						<ChatBox />
 					</Col>
 					<Col md={5}>
-						<ChatTool/>
+						<ChatTool />
 					</Col>
 				</Row>
 			</div>
@@ -75,10 +103,6 @@ function Chat({
 	);
 }
 
-Chat.getInitialProps = async ({ req }) => {
-	const { fullName, username, avatar } = (req && req.user) || {};
-	return { currentUser: { fullName, username, avatar } };
-};
 export default connect(
 	state => ({
 		rooms: state.channel.rooms,

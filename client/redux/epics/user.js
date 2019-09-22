@@ -18,15 +18,12 @@ export const login = ($action, $state) =>
 		ofType(types.PERFORM_LOGIN),
 		mergeMap(action =>
 			request({
-				url: 'http://localhost:8080/spring/user/login',
+				url: '/spring/user/login',
 				method: 'POST',
 				body: action.payload,
 			}).pipe(
 				map(response => {
 					response.response && setCookie('sid', response.response.jwt);
-					setTimeout(() => {
-						// window.location.href = '/';
-					}, 100);
 					return userActions.loginSuccess(response.response);
 				}),
 				catchError(error =>

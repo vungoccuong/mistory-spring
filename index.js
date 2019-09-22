@@ -1,33 +1,18 @@
 const dev = process.env.NODE_ENV !== 'production';
-require('dotenv').config({ path: dev ? '.dev.env' : '.env' });
 const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
 const http = require('http');
-const passport = require('passport');
 const port = process.env.PORT || 3000;
-const onlyServer = process.env.OS === 'true';
 const next = require('next');
 const app = next({ dev, dir: './client' });
 const handle = app.getRequestHandler();
-require('./server/models')();
-require('./server/passport/localStrategy')();
-const sessionParser = require('./server/shareds/sessionParser');
-if (onlyServer) {
+app.prepare().then(() => {
 	_init();
-} else {
-	app.prepare().then(() => {
-		_init();
-	});
-}
+});
 
 function _init() {
 	const expressServer = _initExpress();
 	expressServer.nextApp = app;
 	const httpServer = http.createServer(expressServer);
-	const wss = require('./server/libs/socket').init(httpServer);
-	require('./server/socket')(wss);
 	httpServer.listen(port, () => {
 		console.log(`server ready on : ${port}`);
 	});
@@ -41,27 +26,17 @@ function _initExpress() {
 }
 
 function _initBaseMiddleware(server) {
-	server.use('/spring', require('http-proxy-middleware')({
-		target: 'http://localhost:8080',
-		changeOrigin: true,
-		secure: false,
-	}));
-	server.use(express.static(path.join(__dirname, 'public')));
-	server.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-	server.use(logger('dev'));
-	server.use(express.json());
-	server.use(express.urlencoded({ extended: false }));
-	server.use(cookieParser());
-	server.use(sessionParser);
-	server.use(require('./server/middlewares/jwt-middleware'));
-	// server.use(passport.initialize());
-	// server.use(passport.session());
+	server.use(
+		'/spring',
+		require('http-proxy-middleware')({
+			target: 'http://localhost:8080',
+			changeOrigin: true,
+			secure: false,
+		}),
+	);
 }
 
 function _initRouter(server) {
-
-	server.use('/v1', require('./server/routes'));
-	require('./server/routes/next')(server, app);
 	server.get('*', (req, res) => {
 		return handle(req, res);
 	});
